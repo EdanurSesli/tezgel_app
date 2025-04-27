@@ -1,73 +1,52 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-
-import 'home_screen.dart';
+import 'package:tezgel_app/screens/login_screen.dart'; // Login ekranı
+// import 'package:tezgel_app/screens/home_screen.dart'; // İstersen login başarılıysa gidilecek ekran
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    startTimer();
+  }
 
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..forward();
-
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
-
-    // 3 saniye sonra yönlendirme
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+  void startTimer() {
+    Timer(const Duration(seconds: 2), () {
+      checkLoginStatus();
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void checkLoginStatus() async {
+    // Burada local storage veya herhangi bir yerden kullanıcı login kontrolü yapılacak.
+    bool isLoggedIn = false; // Şu anda manuel false verdik, sonra buraya gerçek kontrol eklersin.
+
+    if (isLoggedIn) {
+      // Kullanıcı giriş yapmışsa ana ekrana yönlendir
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+    } else {
+      // Giriş yapmamışsa login ekranına yönlendir
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // Arka plan rengi
+    return const Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: ScaleTransition(
-          scale: _animation,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'lib/assets/logo.png',
-                width: 150,
-                height: 150,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "TezGel",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ],
+        child: Text(
+          'TezGel',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: Colors.orange,
           ),
         ),
       ),
