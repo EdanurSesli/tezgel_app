@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 
-Future<String?> selectLocation(BuildContext context) async {
+Future<Map<String, double>?> selectLocation(BuildContext context) async {
   LatLng selectedLocation = const LatLng(41.0082, 28.9784); // Başlangıç: İstanbul
 
-  return await Navigator.push(
+  final result = await Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => LocationPickerScreen(initialLocation: selectedLocation),
     ),
   );
+
+  return result != null ? Map<String, double>.from(result) : null;
 }
 
 class LocationPickerScreen extends StatefulWidget {
@@ -39,18 +40,10 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   }
 
   Future<void> _confirmLocation() async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      _pickedLocation.latitude,
-      _pickedLocation.longitude,
-    );
-
-    if (placemarks.isNotEmpty) {
-      Placemark place = placemarks.first;
-      String address = "${place.street}, ${place.locality}";
-      Navigator.pop(context, address);
-    } else {
-      Navigator.pop(context, null);
-    }
+    Navigator.pop(context, {
+      'latitude': _pickedLocation.latitude,
+      'longitude': _pickedLocation.longitude,
+    });
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../widgets/location.dart';
 
 class UserRegisterScreen extends StatefulWidget {
@@ -17,7 +16,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
-  String? selectedAddress;
+  double? latitude;
+  double? longitude;
 
   InputDecoration _inputDecoration(String hintText) {
     return InputDecoration(
@@ -48,20 +48,25 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               const Text('Email', style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(controller: emailController, decoration: _inputDecoration('Email')),
               const SizedBox(height: 10),
-              const Text('Adres', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Konum', style: TextStyle(fontWeight: FontWeight.bold)),
               ElevatedButton(
                 onPressed: () async {
-                  String? result = await selectLocation(context);
+                  final result = await selectLocation(context);
                   if (result != null) {
                     setState(() {
-                      selectedAddress = result;
+                      latitude = result['latitude'];
+                      longitude = result['longitude'];
                     });
                   }
                 },
                 child: const Text('Konum Seç'),
               ),
               const SizedBox(height: 5),
-              Text(selectedAddress ?? 'Henüz konum seçilmedi.'),
+              Text(
+                latitude != null && longitude != null
+                    ? 'Lat: $latitude, Lng: $longitude'
+                    : 'Henüz konum seçilmedi.',
+              ),
               const SizedBox(height: 10),
               const Text('Şifre', style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(controller: passwordController, obscureText: true, decoration: _inputDecoration('Şifre')),
@@ -71,7 +76,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  // Kayıt işlemi yapılacak
+                  // Burada latitude ve longitude ile backend'e gönderebilirsin
                 },
                 child: const Text('Kayıt Ol'),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
