@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tezgel_app/screens/home_screen.dart';
 import 'package:tezgel_app/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                // Giriş işlemi yapılacak
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
               },
               child: const Text('Giriş Yap'),
               style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
