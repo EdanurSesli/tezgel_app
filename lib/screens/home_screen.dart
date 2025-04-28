@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tezgel_app/widgets/bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,7 +10,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-
   Color borderColor = const Color(0xFFD7D7E0); // Tema çerçeve rengi
 
   @override
@@ -20,13 +20,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // LOGO
             const Text(
               'LOGO',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            // Search Buttons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -46,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
               endIndent: 16,
             ),
             const SizedBox(height: 8),
-            // Product Card
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -56,35 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
+      bottomNavigationBar: BottomNavBarWidget(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lightbulb_outline),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_outline),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_outlined),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Account',
-          ),
-        ],
       ),
     );
   }
@@ -111,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Ürün resmi
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
@@ -122,13 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            // Ürün adı
             const Text(
               'Ekmek',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            // Lokasyon
             Row(
               children: [
                 Icon(Icons.location_on, size: 16, color: borderColor),
@@ -137,7 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            // Kategori
             Row(
               children: [
                 Icon(Icons.category, size: 16, color: borderColor),
@@ -146,7 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            // Zaman
             Row(
               children: [
                 Icon(Icons.access_time, size: 16, color: borderColor),
@@ -155,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            // İşletme adı
             Row(
               children: [
                 Icon(Icons.apartment, size: 16, color: borderColor),
@@ -164,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            // Fiyat bilgileri
             Row(
               children: [
                 Text(
@@ -187,13 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            // Açıklama
             const Text(
               "We are looking for an experienced mobile app developer to create a cutting-edge iOS and Android applications for our startup.",
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 12),
-            // View Details butonu
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

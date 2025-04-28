@@ -28,17 +28,26 @@ dependencies:
   geocoding: ^3.0.0
   google_maps_flutter: ^2.12.1
   geolocator: ^14.0.0
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  shared_preferences: ^2.5.3
+  provider: ^6.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.3
+  build_runner: any
+  intl_utils: any
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - lib/assets/logo.png
+  
 
 flutter_icons:
   android: true

@@ -1,0 +1,13 @@
+{
+  "@@locale": "tr",
+  "greeting": "Merhaba!",
+  "settings": "Ayarlar",
+  "appTitle": "TezGel",
+  "myAccount": "Hesabım",
+  "phone": "Telefon",
+  "location": "Konum",
+  "business": "İşletme",
+  "logout": "Çıkış Yap",
+  "english": "İngilizce",
+  "turkish": "Türkçe"
+}

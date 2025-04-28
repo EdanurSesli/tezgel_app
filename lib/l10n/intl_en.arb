@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "greeting": "Hello!",
+  "settings": "Settings",
+  "appTitle": "TezGel",
+  "myAccount": "My Account",
+  "phone": "Phone",
+  "location": "Location",
+  "business": "Business",
+  "logout": "Logout",
+  "english": "English",
+  "turkish": "Turkish"
+}
