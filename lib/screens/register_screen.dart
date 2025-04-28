@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'business_register_screen.dart';
 import 'user_register_screen.dart';
 
@@ -10,8 +9,7 @@ class RegisterSelectionScreen extends StatefulWidget {
   _RegisterSelectionScreenState createState() => _RegisterSelectionScreenState();
 }
 
-class _RegisterSelectionScreenState extends State<RegisterSelectionScreen>
-    with SingleTickerProviderStateMixin {
+class _RegisterSelectionScreenState extends State<RegisterSelectionScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String appBarTitle = "Kullanıcı Kayıt";
 
@@ -22,11 +20,7 @@ class _RegisterSelectionScreenState extends State<RegisterSelectionScreen>
 
     _tabController.addListener(() {
       setState(() {
-        if (_tabController.index == 0) {
-          appBarTitle = "Kullanıcı Kayıt";
-        } else {
-          appBarTitle = "İşletme Kayıt";
-        }
+        appBarTitle = _tabController.index == 0 ? "Kullanıcı Kayıt" : "İşletme Kayıt";
       });
     });
   }
@@ -34,23 +28,26 @@ class _RegisterSelectionScreenState extends State<RegisterSelectionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(appBarTitle),
+        title: Text(appBarTitle, style: const TextStyle(color: Colors.black)),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.purple,
-          labelColor: Colors.purple,
+          indicatorColor: Colors.orange,
+          labelColor: Colors.orange,
           unselectedLabelColor: Colors.grey,
           tabs: const [
-            Tab(text: "Kullanıcı Kayıt"),
-            Tab(text: "İşletme Kayıt"),
+            Tab(text: "Kullanıcı"),
+            Tab(text: "İşletme"),
           ],
         ),
       ),
