@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/my_account_screen.dart'; // MyAccountScreen'i import ettik
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
 class BottomNavBarWidget extends StatelessWidget {
   final int selectedIndex;
@@ -11,42 +11,92 @@ class BottomNavBarWidget extends StatelessWidget {
     required this.onItemTapped,
   });
 
-  void _handleTap(BuildContext context, int index) {
-    if (index == 3) { // 3 = Account ikonunun olduğu index
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const MyAccountScreen()),
-      );
-    } else {
-      onItemTapped(index);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      onTap: (index) => _handleTap(context, index),
-      selectedItemColor: Colors.green,
-      unselectedItemColor: Colors.grey,
-      backgroundColor: Colors.white,
-      elevation: 8,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.lightbulb_outline),
-          label: 'Notifications',
+    const double fabHeight = 56.0 + 16.0;
+    const double bottomNavBarHeight = kBottomNavigationBarHeight;
+    final double positionBottom = bottomNavBarHeight - (fabHeight / 2);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: selectedIndex,
+          onTap: onItemTapped,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconSize: 24, // Sabit ikon boyutu
+          selectedLabelStyle: const TextStyle(
+            fontSize: 12, 
+            fontWeight: FontWeight.normal // Yazı stilini sabit tut
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.normal // Yazı stilini sabit tut
+          ),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.home, color: Colors.grey),
+              activeIcon: Icon(FeatherIcons.home, color: Colors.green),
+              label: 'Anasayfa',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.heart, color: Colors.grey),
+              activeIcon: Icon(FeatherIcons.heart, color: Colors.green),
+              label: 'Favoriler',
+            ),
+            BottomNavigationBarItem(
+              icon: SizedBox.shrink(),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.bell, color: Colors.grey),
+              activeIcon: Icon(FeatherIcons.bell, color: Colors.green),
+              label: 'Bildirimler',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.user, color: Colors.grey),
+              activeIcon: Icon(FeatherIcons.user, color: Colors.green),
+              label: 'Hesabım',
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite_outline),
-          label: 'Notifications',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications_outlined),
-          label: 'Notifications',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Account',
+        Positioned(
+          bottom: positionBottom,
+          left: 0,
+          right: 0,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: fabHeight,
+              width: fabHeight,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: Colors.green,
+                elevation: 0,
+                child: const Icon(
+                  FeatherIcons.zap, 
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

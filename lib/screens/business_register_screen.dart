@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-// OpenAPI-generated client & model
-import 'package:tezgel_app/api/lib/src/serializers.dart';
-import 'package:tezgel_app/api/lib/src/api/auth_api.dart';
-import 'package:tezgel_app/api/lib/src/model/business_register_request.dart';
-
 import '../widgets/location.dart';
 
 class BusinessRegisterScreen extends StatefulWidget {
@@ -27,7 +20,6 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
   String? companyType;
   double? latitude;
   double? longitude;
-  bool _isLoading = false;
 
   final List<String> companyTypes = [
     'Anonim Şirket (A.Ş.)',
@@ -41,6 +33,7 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
     return InputDecoration(
       labelText: label,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       prefixIcon: Icon(
         label.contains("İşletme")
             ? Icons.storefront_outlined
@@ -54,49 +47,6 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
     );
   }
 
-  Future<void> _register() async {
-    final authApi = Provider.of<AuthApi>(context, listen: false);
-
-    // Basit validasyon
-    if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Şifreler eşleşmiyor')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    // Oluşturulan built_value isteği
-    final req = BusinessRegisterRequest((b) => b
-      ..businessName = marketNameController.text
-      ..companyType = companyType
-      ..firstName = firstNameController.text
-      ..lastName = lastNameController.text
-      ..username = userNameController.text
-      ..email = emailController.text
-      ..password = passwordController.text
-      ..latitude = latitude
-      ..longitude = longitude
-    );
-
-    try {
-      // Aşağıdaki metot adını kendi AuthApi içindeki business-register endpoint’ine göre düzeltin.
-      await authApi.apiAuthCreateBusinessRegisterPost(
-        businessRegisterRequest: req,
-      );
-
-      // Başarılıysa login sayfasına yönlendir
-      Navigator.pushReplacementNamed(context, '/login');
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kayıt başarısız: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,28 +55,50 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              const Text('İşletme Adı', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               TextField(controller: marketNameController, decoration: _inputDecoration('İşletme Adı')),
               const SizedBox(height: 20),
+
+              const Text('İşletme Tipi', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: companyType,
                 hint: const Text('İşletme Tipi Seçiniz'),
+                items: companyTypes.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    companyType = value;
+                  });
+                },
                 decoration: _inputDecoration('İşletme Tipi'),
-                items: companyTypes
-                    .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-                    .toList(),
-                onChanged: (v) => setState(() => companyType = v),
               ),
               const SizedBox(height: 20),
+
+              const Text('Adınız', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               TextField(controller: firstNameController, decoration: _inputDecoration('Adınız')),
               const SizedBox(height: 20),
+
+              const Text('Soyadınız', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               TextField(controller: lastNameController, decoration: _inputDecoration('Soyadınız')),
               const SizedBox(height: 20),
+
+              const Text('Kullanıcı Adı', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               TextField(controller: userNameController, decoration: _inputDecoration('Kullanıcı Adı')),
               const SizedBox(height: 20),
+
+              const Text('Email', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               TextField(controller: emailController, decoration: _inputDecoration('Email')),
               const SizedBox(height: 20),
+
+              const Text('Konum', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () async {
                   final result = await selectLocation(context);
@@ -152,23 +124,22 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                     : 'Henüz konum seçilmedi.',
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: _inputDecoration('Şifre'),
-              ),
+
+              const Text('Şifre', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              TextField(controller: passwordController, obscureText: true, decoration: _inputDecoration('Şifre')),
               const SizedBox(height: 20),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration: _inputDecoration('Şifre Doğrulama'),
-              ),
+
+              const Text('Şifre Doğrulama', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              TextField(controller: confirmPasswordController, obscureText: true, decoration: _inputDecoration('Şifre Doğrulama')),
               const SizedBox(height: 30),
+
               ElevatedButton(
-                onPressed: _isLoading ? null : _register,
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Kayıt Ol'),
+                onPressed: () {
+                  // TODO: Kayıt işlemi burada yapılabilir.
+                },
+                child: const Text('Kayıt Ol'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,

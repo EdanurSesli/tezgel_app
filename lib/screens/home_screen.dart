@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tezgel_app/widgets/bottom_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,7 +8,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
   Color borderColor = const Color(0xFFD7D7E0); // Tema çerçeve rengi
 
   @override
@@ -53,14 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBarWidget(
-        selectedIndex: _selectedIndex,
-        onItemTapped: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
     );
   }
 
@@ -88,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                'https://img.freepik.com/premium-photo/lots-loaves-bread-shelves-bakery-store_902845-16371.jpg',
+              child: Image.asset(
+                'assets/ekmek.jpeg',
                 width: double.infinity,
                 height: 180,
                 fit: BoxFit.cover,
@@ -121,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Icon(Icons.access_time, size: 16, color: borderColor),
                 const SizedBox(width: 4),
-                const Text('1 hours ago', style: TextStyle(fontSize: 14)),
+                const Text('1 saat önce', style: TextStyle(fontSize: 14)),
               ],
             ),
             const SizedBox(height: 8),
@@ -166,9 +156,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('View Details', style: TextStyle(color: Colors.white)),
+                child: const Text('Detayları Gör',
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
           ],

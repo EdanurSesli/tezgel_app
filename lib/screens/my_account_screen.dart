@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Cupertino (iOS) navigasyonu için
 
 class MyAccountScreen extends StatelessWidget {
   const MyAccountScreen({super.key});
@@ -16,70 +17,74 @@ class MyAccountScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
 
-              // Profil Fotoğrafı
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=2', // Örnek profil fotoğrafı
+                // Profil Fotoğrafı
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(
+                    'https://i.pravatar.cc/150?img=2', // Örnek profil fotoğrafı
+                  ),
                 ),
-              ),
-              
-              const SizedBox(height: 16),
+                
+                const SizedBox(height: 16),
 
-              // Kullanıcı Adı
-              const Text(
-                'Edanur Sesli',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                // Kullanıcı Adı
+                const Text(
+                  'Edanur Sesli',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 8),
+                const SizedBox(height: 8),
 
-              // Email
-              const Text(
-                'edanursesli@example.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+                // Email
+                const Text(
+                  'edanursesli@example.com',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              // Bilgiler Kartı
-              _buildProfileInfoCard(),
+                // Profil Bilgiler Kartı
+                _buildProfileInfoCard(),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              // Çıkış Butonu
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Çıkış işlemi burada yapılacak
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                // Çıkış Butonu
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Çıkış işlemi burada yapılacak ve login sayfasına yönlendirilecek
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.logout),
+                    label: const Text(
+                      'Çıkış Yap',
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
-                  icon: const Icon(Icons.logout),
-                  label: const Text(
-                    'Çıkış Yap',
-                    style: TextStyle(fontSize: 18),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-            ],
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),
@@ -97,12 +102,44 @@ class MyAccountScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildInfoRow(Icons.phone, 'Telefon', '+90 501 201 38 44'),
-            const Divider(height: 32),
+            const SizedBox(height: 16),
             _buildInfoRow(Icons.location_on, 'Konum', 'Bakırköy, İstanbul'),
-            const Divider(height: 32),
+            const SizedBox(height: 16),
             _buildInfoRow(Icons.business, 'İşletme', 'Kardeşler Fırın'),
+            const SizedBox(height: 16),
+            _buildInfoRow(Icons.comment, 'Yorumlar', 'Ürün ve Satıcı Yorumlarım'),
+            const SizedBox(height: 16),
+            _buildInfoRow(Icons.add_shopping_cart, 'Satılık Ürünler', 'Ekmek, Pasta, Çörek vb.'),
+            const SizedBox(height: 16),
+
+            // Müşteri Hizmetleri ve Ürün Ekle Butonları
+            _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
+              // Müşteri hizmetleri sayfasına yönlendir
+            }),
+            const SizedBox(height: 16),
+            _buildActionButton(Icons.add_box, 'Ürün Ekle', () {
+              // Ürün ekleme sayfasına yönlendir
+            }),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(IconData icon, String title, VoidCallback onPressed) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      icon: Icon(icon),
+      label: Text(
+        title,
+        style: const TextStyle(fontSize: 18),
       ),
     );
   }
