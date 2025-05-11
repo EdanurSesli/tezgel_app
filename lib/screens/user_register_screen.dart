@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tezgel_app/models/user_register_request.dart';
+import 'package:tezgel_app/models/register_models/user_register_request.dart';
 import '../blocs/user_register/user_register_bloc.dart';
 import '../blocs/user_register/user_register_event.dart';
 import '../blocs/user_register/user_register_state.dart';

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import '../models/user_register_request.dart';
-import '../models/user_register_response.dart';
+import '../models/register_models/user_register_request.dart';
+import '../models/register_models/user_register_response.dart';
 import '../constants.dart';
 
 class UserRegisterService {

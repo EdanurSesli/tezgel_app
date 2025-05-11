@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../models/user_register_request.dart';
+import '../../models/register_models/user_register_request.dart';
 
 abstract class UserRegisterEvent extends Equatable {
   const UserRegisterEvent();
