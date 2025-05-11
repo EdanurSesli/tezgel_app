@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:tezgel_app/providers/language_provider.dart';
 import 'package:tezgel_app/screens/business_register_screen.dart';
-import 'package:tezgel_app/screens/favorites_screen.dart';
+import 'package:tezgel_app/screens/categories_screen.dart';
 import 'package:tezgel_app/screens/home_screen.dart';
 import 'package:tezgel_app/screens/my_account_screen.dart';
 import 'package:tezgel_app/screens/notifications_screen.dart';
@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
   // Ekran Listesi
   final List<Widget> _screens = const [
     HomeScreen(),
-    FavoritesScreen(),
+    CategoriesScreen(),
     SizedBox.shrink(), // Ortada aksiyon butonu olacak boş alan
     NotificationsScreen(),
     MyAccountScreen(),
