@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../models/register_models/user_register_response.dart';
+import '../../models/register_models/base_register_response.dart';
 
 abstract class UserRegisterState extends Equatable {
   const UserRegisterState();
@@ -13,7 +13,7 @@ class UserRegisterInitial extends UserRegisterState {}
 class UserRegisterLoading extends UserRegisterState {}
 
 class UserRegisterSuccess extends UserRegisterState {
-  final UserRegisterResponse response;
+  final BaseRegisterResponse response;
 
   const UserRegisterSuccess(this.response);
 

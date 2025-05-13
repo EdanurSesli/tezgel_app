@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_register_response.dart';
+part of 'base_register_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_UserRegisterResponse _$UserRegisterResponseFromJson(
+_BaseRegisterResponse _$BaseRegisterResponseFromJson(
         Map<String, dynamic> json) =>
-    _UserRegisterResponse(
+    _BaseRegisterResponse(
       message: json['message'] as String?,
       data: json['data'] as String?,
       statusCode: (json['statusCode'] as num?)?.toInt(),
@@ -17,8 +17,8 @@ _UserRegisterResponse _$UserRegisterResponseFromJson(
       validationErrors: json['validationErrors'] as String?,
     );
 
-Map<String, dynamic> _$UserRegisterResponseToJson(
-        _UserRegisterResponse instance) =>
+Map<String, dynamic> _$BaseRegisterResponseToJson(
+        _BaseRegisterResponse instance) =>
     <String, dynamic>{
       'message': instance.message,
       'data': instance.data,

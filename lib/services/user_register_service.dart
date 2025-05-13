@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import '../models/register_models/user_register_request.dart';
-import '../models/register_models/user_register_response.dart';
+import '../models/register_models/base_register_response.dart';
 import '../constants.dart';
 
 class UserRegisterService {
@@ -8,7 +8,7 @@ class UserRegisterService {
 
   UserRegisterService({Dio? dio}) : _dio = dio ?? Dio();
 
-  Future<UserRegisterResponse> register(UserRegisterRequest request) async {
+  Future<BaseRegisterResponse> register(UserRegisterRequest request) async {
     try {
       final response = await _dio.post(
         '${ApiConstants.baseUrl}/Auth/register-customer',
@@ -16,7 +16,7 @@ class UserRegisterService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return UserRegisterResponse.fromJson(response.data);
+        return BaseRegisterResponse.fromJson(response.data);
       } else {
         throw Exception('Beklenmeyen durum kodu: ${response.statusCode}');
       }

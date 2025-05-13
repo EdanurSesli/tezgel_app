@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'user_register_response.dart';
+part of 'base_register_response.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,7 +14,7 @@ part of 'user_register_response.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$UserRegisterResponse {
+mixin _$BaseRegisterResponse {
   String? get message;
   String? get data;
   int? get statusCode;
@@ -22,22 +22,22 @@ mixin _$UserRegisterResponse {
   bool? get hasExceptionError;
   String? get validationErrors;
 
-  /// Create a copy of UserRegisterResponse
+  /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $UserRegisterResponseCopyWith<UserRegisterResponse> get copyWith =>
-      _$UserRegisterResponseCopyWithImpl<UserRegisterResponse>(
-          this as UserRegisterResponse, _$identity);
+  $BaseRegisterResponseCopyWith<BaseRegisterResponse> get copyWith =>
+      _$BaseRegisterResponseCopyWithImpl<BaseRegisterResponse>(
+          this as BaseRegisterResponse, _$identity);
 
-  /// Serializes this UserRegisterResponse to a JSON map.
+  /// Serializes this BaseRegisterResponse to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is UserRegisterResponse &&
+            other is BaseRegisterResponse &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.statusCode, statusCode) ||
@@ -57,15 +57,15 @@ mixin _$UserRegisterResponse {
 
   @override
   String toString() {
-    return 'UserRegisterResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'BaseRegisterResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
-abstract mixin class $UserRegisterResponseCopyWith<$Res> {
-  factory $UserRegisterResponseCopyWith(UserRegisterResponse value,
-          $Res Function(UserRegisterResponse) _then) =
-      _$UserRegisterResponseCopyWithImpl;
+abstract mixin class $BaseRegisterResponseCopyWith<$Res> {
+  factory $BaseRegisterResponseCopyWith(BaseRegisterResponse value,
+          $Res Function(BaseRegisterResponse) _then) =
+      _$BaseRegisterResponseCopyWithImpl;
   @useResult
   $Res call(
       {String? message,
@@ -77,14 +77,14 @@ abstract mixin class $UserRegisterResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$UserRegisterResponseCopyWithImpl<$Res>
-    implements $UserRegisterResponseCopyWith<$Res> {
-  _$UserRegisterResponseCopyWithImpl(this._self, this._then);
+class _$BaseRegisterResponseCopyWithImpl<$Res>
+    implements $BaseRegisterResponseCopyWith<$Res> {
+  _$BaseRegisterResponseCopyWithImpl(this._self, this._then);
 
-  final UserRegisterResponse _self;
-  final $Res Function(UserRegisterResponse) _then;
+  final BaseRegisterResponse _self;
+  final $Res Function(BaseRegisterResponse) _then;
 
-  /// Create a copy of UserRegisterResponse
+  /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -127,16 +127,16 @@ class _$UserRegisterResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _UserRegisterResponse implements UserRegisterResponse {
-  const _UserRegisterResponse(
+class _BaseRegisterResponse implements BaseRegisterResponse {
+  const _BaseRegisterResponse(
       {this.message,
       this.data,
       this.statusCode,
       this.isSuccess,
       this.hasExceptionError,
       this.validationErrors});
-  factory _UserRegisterResponse.fromJson(Map<String, dynamic> json) =>
-      _$UserRegisterResponseFromJson(json);
+  factory _BaseRegisterResponse.fromJson(Map<String, dynamic> json) =>
+      _$BaseRegisterResponseFromJson(json);
 
   @override
   final String? message;
@@ -151,18 +151,18 @@ class _UserRegisterResponse implements UserRegisterResponse {
   @override
   final String? validationErrors;
 
-  /// Create a copy of UserRegisterResponse
+  /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$UserRegisterResponseCopyWith<_UserRegisterResponse> get copyWith =>
-      __$UserRegisterResponseCopyWithImpl<_UserRegisterResponse>(
+  _$BaseRegisterResponseCopyWith<_BaseRegisterResponse> get copyWith =>
+      __$BaseRegisterResponseCopyWithImpl<_BaseRegisterResponse>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$UserRegisterResponseToJson(
+    return _$BaseRegisterResponseToJson(
       this,
     );
   }
@@ -171,7 +171,7 @@ class _UserRegisterResponse implements UserRegisterResponse {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UserRegisterResponse &&
+            other is _BaseRegisterResponse &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.statusCode, statusCode) ||
@@ -191,16 +191,16 @@ class _UserRegisterResponse implements UserRegisterResponse {
 
   @override
   String toString() {
-    return 'UserRegisterResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'BaseRegisterResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$UserRegisterResponseCopyWith<$Res>
-    implements $UserRegisterResponseCopyWith<$Res> {
-  factory _$UserRegisterResponseCopyWith(_UserRegisterResponse value,
-          $Res Function(_UserRegisterResponse) _then) =
-      __$UserRegisterResponseCopyWithImpl;
+abstract mixin class _$BaseRegisterResponseCopyWith<$Res>
+    implements $BaseRegisterResponseCopyWith<$Res> {
+  factory _$BaseRegisterResponseCopyWith(_BaseRegisterResponse value,
+          $Res Function(_BaseRegisterResponse) _then) =
+      __$BaseRegisterResponseCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -213,14 +213,14 @@ abstract mixin class _$UserRegisterResponseCopyWith<$Res>
 }
 
 /// @nodoc
-class __$UserRegisterResponseCopyWithImpl<$Res>
-    implements _$UserRegisterResponseCopyWith<$Res> {
-  __$UserRegisterResponseCopyWithImpl(this._self, this._then);
+class __$BaseRegisterResponseCopyWithImpl<$Res>
+    implements _$BaseRegisterResponseCopyWith<$Res> {
+  __$BaseRegisterResponseCopyWithImpl(this._self, this._then);
 
-  final _UserRegisterResponse _self;
-  final $Res Function(_UserRegisterResponse) _then;
+  final _BaseRegisterResponse _self;
+  final $Res Function(_BaseRegisterResponse) _then;
 
-  /// Create a copy of UserRegisterResponse
+  /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -232,7 +232,7 @@ class __$UserRegisterResponseCopyWithImpl<$Res>
     Object? hasExceptionError = freezed,
     Object? validationErrors = freezed,
   }) {
-    return _then(_UserRegisterResponse(
+    return _then(_BaseRegisterResponse(
       message: freezed == message
           ? _self.message
           : message // ignore: cast_nullable_to_non_nullable
