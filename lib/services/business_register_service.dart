@@ -5,15 +5,15 @@ import '../models/register_models/user_register_request.dart';
 import '../models/register_models/base_register_response.dart';
 import '../constants.dart';
 
-class UserRegisterService {
+class BusinessRegisterService {
   final Dio _dio;
 
-  UserRegisterService({Dio? dio}) : _dio = dio ?? Dio();
+  BusinessRegisterService({Dio? dio}) : _dio = dio ?? Dio();
 
-  Future<BaseRegisterResponse> register(UserRegisterRequest request) async {
+  Future<BaseRegisterResponse> businessregister(BusinessRegisterRequest request) async {
     try {
       final response = await _dio.post(
-        '${ApiConstants.baseUrl}/Auth/register-customer',
+        '${ApiConstants.baseUrl}/Auth/register-business',
         data: request.toJson(),
       );
 

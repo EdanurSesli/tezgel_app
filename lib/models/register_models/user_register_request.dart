@@ -6,17 +6,18 @@ part 'user_register_request.g.dart';
 
 @freezed
 abstract class UserRegisterRequest with _$UserRegisterRequest {
-    const factory UserRegisterRequest({
-        String? firstName,
-        String? lastName,
-        String? email,
-        String? password,
-        String? userName,
-        String? address,
-        String? longtitude,
-        String? latitude,
-        DateTime? birthDate,
-    }) = _UserRegisterRequest;
+  const factory UserRegisterRequest({
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? password,
+    String? userName,
+    String? address,
+    double? longitude,
+    double? latitude,
+    DateTime? birthDate,
+  }) = _UserRegisterRequest;
 
-    factory UserRegisterRequest.fromJson(Map<String, dynamic> json) => _$UserRegisterRequestFromJson(json);
+  factory UserRegisterRequest.fromJson(Map<String, dynamic> json) =>
+      _$UserRegisterRequestFromJson(json);
 }

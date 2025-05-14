@@ -40,6 +40,6 @@ class BusinessRegisterSubmitted extends BusinessRegisterEvent {
         email,
         password,
         latitude,
-        longitude
+        longitude,
       ];
 }

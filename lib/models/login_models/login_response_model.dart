@@ -1,21 +1,21 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
-part 'login_request_model.freezed.dart';
-part 'login_request_model.g.dart';
+part 'login_response_model.freezed.dart';
+part 'login_response_model.g.dart';
 
 @freezed
-abstract class LoginRequestModel with _$LoginRequestModel {
-    const factory LoginRequestModel({
+abstract class LoginResponseModel with _$LoginResponseModel {
+    const factory LoginResponseModel({
         String? message,
         DataLogin? data,
         int? statusCode,
         bool? isSuccess,
         bool? hasExceptionError,
         dynamic validationErrors,
-    }) = _LoginRequestModel;
+    }) = _LoginResponseModel;
 
-    factory LoginRequestModel.fromJson(Map<String, dynamic> json) => _$LoginRequestModelFromJson(json);
+    factory LoginResponseModel.fromJson(Map<String, dynamic> json) => _$LoginResponseModelFromJson(json);
 }
 
 @freezed

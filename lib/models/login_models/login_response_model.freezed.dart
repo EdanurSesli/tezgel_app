@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'login_request_model.dart';
+part of 'login_response_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,7 +14,7 @@ part of 'login_request_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$LoginRequestModel {
+mixin _$LoginResponseModel {
   String? get message;
   DataLogin? get data;
   int? get statusCode;
@@ -22,22 +22,22 @@ mixin _$LoginRequestModel {
   bool? get hasExceptionError;
   dynamic get validationErrors;
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $LoginRequestModelCopyWith<LoginRequestModel> get copyWith =>
-      _$LoginRequestModelCopyWithImpl<LoginRequestModel>(
-          this as LoginRequestModel, _$identity);
+  $LoginResponseModelCopyWith<LoginResponseModel> get copyWith =>
+      _$LoginResponseModelCopyWithImpl<LoginResponseModel>(
+          this as LoginResponseModel, _$identity);
 
-  /// Serializes this LoginRequestModel to a JSON map.
+  /// Serializes this LoginResponseModel to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is LoginRequestModel &&
+            other is LoginResponseModel &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.statusCode, statusCode) ||
@@ -63,15 +63,15 @@ mixin _$LoginRequestModel {
 
   @override
   String toString() {
-    return 'LoginRequestModel(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'LoginResponseModel(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
-abstract mixin class $LoginRequestModelCopyWith<$Res> {
-  factory $LoginRequestModelCopyWith(
-          LoginRequestModel value, $Res Function(LoginRequestModel) _then) =
-      _$LoginRequestModelCopyWithImpl;
+abstract mixin class $LoginResponseModelCopyWith<$Res> {
+  factory $LoginResponseModelCopyWith(
+          LoginResponseModel value, $Res Function(LoginResponseModel) _then) =
+      _$LoginResponseModelCopyWithImpl;
   @useResult
   $Res call(
       {String? message,
@@ -85,14 +85,14 @@ abstract mixin class $LoginRequestModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$LoginRequestModelCopyWithImpl<$Res>
-    implements $LoginRequestModelCopyWith<$Res> {
-  _$LoginRequestModelCopyWithImpl(this._self, this._then);
+class _$LoginResponseModelCopyWithImpl<$Res>
+    implements $LoginResponseModelCopyWith<$Res> {
+  _$LoginResponseModelCopyWithImpl(this._self, this._then);
 
-  final LoginRequestModel _self;
-  final $Res Function(LoginRequestModel) _then;
+  final LoginResponseModel _self;
+  final $Res Function(LoginResponseModel) _then;
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -132,7 +132,7 @@ class _$LoginRequestModelCopyWithImpl<$Res>
     ));
   }
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -149,16 +149,16 @@ class _$LoginRequestModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _LoginRequestModel implements LoginRequestModel {
-  const _LoginRequestModel(
+class _LoginResponseModel implements LoginResponseModel {
+  const _LoginResponseModel(
       {this.message,
       this.data,
       this.statusCode,
       this.isSuccess,
       this.hasExceptionError,
       this.validationErrors});
-  factory _LoginRequestModel.fromJson(Map<String, dynamic> json) =>
-      _$LoginRequestModelFromJson(json);
+  factory _LoginResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseModelFromJson(json);
 
   @override
   final String? message;
@@ -173,17 +173,17 @@ class _LoginRequestModel implements LoginRequestModel {
   @override
   final dynamic validationErrors;
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$LoginRequestModelCopyWith<_LoginRequestModel> get copyWith =>
-      __$LoginRequestModelCopyWithImpl<_LoginRequestModel>(this, _$identity);
+  _$LoginResponseModelCopyWith<_LoginResponseModel> get copyWith =>
+      __$LoginResponseModelCopyWithImpl<_LoginResponseModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$LoginRequestModelToJson(
+    return _$LoginResponseModelToJson(
       this,
     );
   }
@@ -192,7 +192,7 @@ class _LoginRequestModel implements LoginRequestModel {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _LoginRequestModel &&
+            other is _LoginResponseModel &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.statusCode, statusCode) ||
@@ -218,16 +218,16 @@ class _LoginRequestModel implements LoginRequestModel {
 
   @override
   String toString() {
-    return 'LoginRequestModel(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'LoginResponseModel(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$LoginRequestModelCopyWith<$Res>
-    implements $LoginRequestModelCopyWith<$Res> {
-  factory _$LoginRequestModelCopyWith(
-          _LoginRequestModel value, $Res Function(_LoginRequestModel) _then) =
-      __$LoginRequestModelCopyWithImpl;
+abstract mixin class _$LoginResponseModelCopyWith<$Res>
+    implements $LoginResponseModelCopyWith<$Res> {
+  factory _$LoginResponseModelCopyWith(
+          _LoginResponseModel value, $Res Function(_LoginResponseModel) _then) =
+      __$LoginResponseModelCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -243,14 +243,14 @@ abstract mixin class _$LoginRequestModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$LoginRequestModelCopyWithImpl<$Res>
-    implements _$LoginRequestModelCopyWith<$Res> {
-  __$LoginRequestModelCopyWithImpl(this._self, this._then);
+class __$LoginResponseModelCopyWithImpl<$Res>
+    implements _$LoginResponseModelCopyWith<$Res> {
+  __$LoginResponseModelCopyWithImpl(this._self, this._then);
 
-  final _LoginRequestModel _self;
-  final $Res Function(_LoginRequestModel) _then;
+  final _LoginResponseModel _self;
+  final $Res Function(_LoginResponseModel) _then;
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -262,7 +262,7 @@ class __$LoginRequestModelCopyWithImpl<$Res>
     Object? hasExceptionError = freezed,
     Object? validationErrors = freezed,
   }) {
-    return _then(_LoginRequestModel(
+    return _then(_LoginResponseModel(
       message: freezed == message
           ? _self.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -290,7 +290,7 @@ class __$LoginRequestModelCopyWithImpl<$Res>
     ));
   }
 
-  /// Create a copy of LoginRequestModel
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')

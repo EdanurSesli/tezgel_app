@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_request_model.dart';
+part of 'login_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_LoginRequestModel _$LoginRequestModelFromJson(Map<String, dynamic> json) =>
-    _LoginRequestModel(
+_LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) =>
+    _LoginResponseModel(
       message: json['message'] as String?,
       data: json['data'] == null
           ? null
@@ -18,7 +18,7 @@ _LoginRequestModel _$LoginRequestModelFromJson(Map<String, dynamic> json) =>
       validationErrors: json['validationErrors'],
     );
 
-Map<String, dynamic> _$LoginRequestModelToJson(_LoginRequestModel instance) =>
+Map<String, dynamic> _$LoginResponseModelToJson(_LoginResponseModel instance) =>
     <String, dynamic>{
       'message': instance.message,
       'data': instance.data,

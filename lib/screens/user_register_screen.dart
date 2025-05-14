@@ -20,7 +20,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   double? latitude;
   double? longitude;
@@ -53,15 +54,25 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                TextField(controller: firstNameController, decoration: _inputDecoration('Adınız')),
+                TextField(
+                    controller: firstNameController,
+                    decoration: _inputDecoration('Adınız')),
                 const SizedBox(height: 20),
-                TextField(controller: lastNameController, decoration: _inputDecoration('Soyadınız')),
+                TextField(
+                    controller: lastNameController,
+                    decoration: _inputDecoration('Soyadınız')),
                 const SizedBox(height: 20),
-                TextField(controller: usernameController, decoration: _inputDecoration('Kullanıcı Adı')),
+                TextField(
+                    controller: usernameController,
+                    decoration: _inputDecoration('Kullanıcı Adı')),
                 const SizedBox(height: 20),
-                TextField(controller: emailController, decoration: _inputDecoration('Email')),
+                TextField(
+                    controller: emailController,
+                    decoration: _inputDecoration('Email')),
                 const SizedBox(height: 20),
-                TextField(controller: addressController, decoration: _inputDecoration('Adresiniz')),
+                TextField(
+                    controller: addressController,
+                    decoration: _inputDecoration('Adresiniz')),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
@@ -77,7 +88,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     minimumSize: const Size(double.infinity, 50),
                   ),
                 ),
@@ -88,16 +100,24 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                       : 'Henüz konum seçilmedi.',
                 ),
                 const SizedBox(height: 20),
-                TextField(controller: passwordController, obscureText: true, decoration: _inputDecoration('Şifre')),
+                TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: _inputDecoration('Şifre')),
                 const SizedBox(height: 20),
-                TextField(controller: confirmPasswordController, obscureText: true, decoration: _inputDecoration('Şifre Doğrulama')),
+                TextField(
+                    controller: confirmPasswordController,
+                    obscureText: true,
+                    decoration: _inputDecoration('Şifre Doğrulama')),
                 const SizedBox(height: 30),
                 BlocConsumer<UserRegisterBloc, UserRegisterState>(
                   listener: (context, state) {
                     if (state is UserRegisterSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Kayıt Başarılı!')));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Kayıt Başarılı!')));
                     } else if (state is UserRegisterFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.error)));
                     }
                   },
                   builder: (context, state) {
@@ -106,19 +126,19 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                           ? null
                           : () {
                               context.read<UserRegisterBloc>().add(
-                                    UserRegisterSubmitted(
-                                      UserRegisterRequest(
-                                        firstName: firstNameController.text,
-                                        lastName: lastNameController.text,
-                                        userName: usernameController.text,
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                        latitude: latitude?.toString(),
-                                        longtitude: longitude?.toString(),
-                                        address: addressController.text,
-                                        birthDate: DateTime(2000, 1, 1),
-                                      ),
-                                    ),
+                                    UserRegisterSubmitted(UserRegisterRequest(
+                                      firstName: firstNameController.text,
+                                      lastName: lastNameController.text,
+                                      userName: usernameController.text,
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      latitude:
+                                          latitude, // double olarak atandı
+                                      longitude:
+                                          longitude, // double olarak atandı
+                                      address: addressController.text,
+                                      birthDate: DateTime(2000, 1, 1),
+                                    )),
                                   );
                             },
                       child: state is UserRegisterLoading
@@ -127,7 +147,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         minimumSize: const Size(double.infinity, 50),
                       ),
                     );

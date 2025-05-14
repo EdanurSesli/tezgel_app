@@ -14,8 +14,8 @@ _UserRegisterRequest _$UserRegisterRequestFromJson(Map<String, dynamic> json) =>
       password: json['password'] as String?,
       userName: json['userName'] as String?,
       address: json['address'] as String?,
-      longtitude: json['longtitude'] as String?,
-      latitude: json['latitude'] as String?,
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      latitude: (json['latitude'] as num?)?.toDouble(),
       birthDate: json['birthDate'] == null
           ? null
           : DateTime.parse(json['birthDate'] as String),
@@ -30,7 +30,7 @@ Map<String, dynamic> _$UserRegisterRequestToJson(
       'password': instance.password,
       'userName': instance.userName,
       'address': instance.address,
-      'longtitude': instance.longtitude,
+      'longitude': instance.longitude,
       'latitude': instance.latitude,
       'birthDate': instance.birthDate?.toIso8601String(),
     };

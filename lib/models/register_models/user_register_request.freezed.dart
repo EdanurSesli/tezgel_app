@@ -21,8 +21,8 @@ mixin _$UserRegisterRequest {
   String? get password;
   String? get userName;
   String? get address;
-  String? get longtitude;
-  String? get latitude;
+  double? get longitude;
+  double? get latitude;
   DateTime? get birthDate;
 
   /// Create a copy of UserRegisterRequest
@@ -51,8 +51,8 @@ mixin _$UserRegisterRequest {
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.address, address) || other.address == address) &&
-            (identical(other.longtitude, longtitude) ||
-                other.longtitude == longtitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.birthDate, birthDate) ||
@@ -62,11 +62,11 @@ mixin _$UserRegisterRequest {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, firstName, lastName, email,
-      password, userName, address, longtitude, latitude, birthDate);
+      password, userName, address, longitude, latitude, birthDate);
 
   @override
   String toString() {
-    return 'UserRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, address: $address, longtitude: $longtitude, latitude: $latitude, birthDate: $birthDate)';
+    return 'UserRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, address: $address, longitude: $longitude, latitude: $latitude, birthDate: $birthDate)';
   }
 }
 
@@ -83,8 +83,8 @@ abstract mixin class $UserRegisterRequestCopyWith<$Res> {
       String? password,
       String? userName,
       String? address,
-      String? longtitude,
-      String? latitude,
+      double? longitude,
+      double? latitude,
       DateTime? birthDate});
 }
 
@@ -107,7 +107,7 @@ class _$UserRegisterRequestCopyWithImpl<$Res>
     Object? password = freezed,
     Object? userName = freezed,
     Object? address = freezed,
-    Object? longtitude = freezed,
+    Object? longitude = freezed,
     Object? latitude = freezed,
     Object? birthDate = freezed,
   }) {
@@ -136,14 +136,14 @@ class _$UserRegisterRequestCopyWithImpl<$Res>
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
-      longtitude: freezed == longtitude
-          ? _self.longtitude
-          : longtitude // ignore: cast_nullable_to_non_nullable
-              as String?,
+      longitude: freezed == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       latitude: freezed == latitude
           ? _self.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       birthDate: freezed == birthDate
           ? _self.birthDate
           : birthDate // ignore: cast_nullable_to_non_nullable
@@ -162,7 +162,7 @@ class _UserRegisterRequest implements UserRegisterRequest {
       this.password,
       this.userName,
       this.address,
-      this.longtitude,
+      this.longitude,
       this.latitude,
       this.birthDate});
   factory _UserRegisterRequest.fromJson(Map<String, dynamic> json) =>
@@ -181,9 +181,9 @@ class _UserRegisterRequest implements UserRegisterRequest {
   @override
   final String? address;
   @override
-  final String? longtitude;
+  final double? longitude;
   @override
-  final String? latitude;
+  final double? latitude;
   @override
   final DateTime? birthDate;
 
@@ -218,8 +218,8 @@ class _UserRegisterRequest implements UserRegisterRequest {
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.address, address) || other.address == address) &&
-            (identical(other.longtitude, longtitude) ||
-                other.longtitude == longtitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.birthDate, birthDate) ||
@@ -229,11 +229,11 @@ class _UserRegisterRequest implements UserRegisterRequest {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, firstName, lastName, email,
-      password, userName, address, longtitude, latitude, birthDate);
+      password, userName, address, longitude, latitude, birthDate);
 
   @override
   String toString() {
-    return 'UserRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, address: $address, longtitude: $longtitude, latitude: $latitude, birthDate: $birthDate)';
+    return 'UserRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, address: $address, longitude: $longitude, latitude: $latitude, birthDate: $birthDate)';
   }
 }
 
@@ -252,8 +252,8 @@ abstract mixin class _$UserRegisterRequestCopyWith<$Res>
       String? password,
       String? userName,
       String? address,
-      String? longtitude,
-      String? latitude,
+      double? longitude,
+      double? latitude,
       DateTime? birthDate});
 }
 
@@ -276,7 +276,7 @@ class __$UserRegisterRequestCopyWithImpl<$Res>
     Object? password = freezed,
     Object? userName = freezed,
     Object? address = freezed,
-    Object? longtitude = freezed,
+    Object? longitude = freezed,
     Object? latitude = freezed,
     Object? birthDate = freezed,
   }) {
@@ -305,14 +305,14 @@ class __$UserRegisterRequestCopyWithImpl<$Res>
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
-      longtitude: freezed == longtitude
-          ? _self.longtitude
-          : longtitude // ignore: cast_nullable_to_non_nullable
-              as String?,
+      longitude: freezed == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double?,
       latitude: freezed == latitude
           ? _self.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as double?,
       birthDate: freezed == birthDate
           ? _self.birthDate
           : birthDate // ignore: cast_nullable_to_non_nullable

@@ -19,7 +19,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   String? companyType;
   double? latitude;
@@ -62,17 +63,23 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('İşletme Adı', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('İşletme Adı',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
-                TextField(controller: marketNameController, decoration: _inputDecoration('İşletme Adı')),
+                TextField(
+                    controller: marketNameController,
+                    decoration: _inputDecoration('İşletme Adı')),
                 const SizedBox(height: 20),
-
-                const Text('İşletme Tipi', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('İşletme Tipi',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: companyType,
                   hint: const Text('İşletme Tipi Seçiniz'),
-                  items: companyTypes.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+                  items: companyTypes
+                      .map((type) =>
+                          DropdownMenuItem(value: type, child: Text(type)))
+                      .toList(),
                   onChanged: (value) {
                     setState(() {
                       companyType = value;
@@ -81,16 +88,22 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   decoration: _inputDecoration('İşletme Tipi'),
                 ),
                 const SizedBox(height: 20),
-
-                TextField(controller: firstNameController, decoration: _inputDecoration('Adınız')),
+                TextField(
+                    controller: firstNameController,
+                    decoration: _inputDecoration('Adınız')),
                 const SizedBox(height: 20),
-                TextField(controller: lastNameController, decoration: _inputDecoration('Soyadınız')),
+                TextField(
+                    controller: lastNameController,
+                    decoration: _inputDecoration('Soyadınız')),
                 const SizedBox(height: 20),
-                TextField(controller: userNameController, decoration: _inputDecoration('Kullanıcı Adı')),
+                TextField(
+                    controller: userNameController,
+                    decoration: _inputDecoration('Kullanıcı Adı')),
                 const SizedBox(height: 20),
-                TextField(controller: emailController, decoration: _inputDecoration('Email')),
+                TextField(
+                    controller: emailController,
+                    decoration: _inputDecoration('Email')),
                 const SizedBox(height: 20),
-
                 ElevatedButton(
                   onPressed: () async {
                     final result = await selectLocation(context);
@@ -105,7 +118,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     minimumSize: const Size(double.infinity, 50),
                   ),
                 ),
@@ -116,18 +130,27 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       : 'Henüz konum seçilmedi.',
                 ),
                 const SizedBox(height: 20),
-
-                TextField(controller: passwordController, obscureText: true, decoration: _inputDecoration('Şifre')),
+                TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: _inputDecoration('Şifre')),
                 const SizedBox(height: 20),
-                TextField(controller: confirmPasswordController, obscureText: true, decoration: _inputDecoration('Şifre Doğrulama')),
+                TextField(
+                    controller: confirmPasswordController,
+                    obscureText: true,
+                    decoration: _inputDecoration('Şifre Doğrulama')),
                 const SizedBox(height: 30),
-
                 BlocConsumer<BusinessRegisterBloc, BusinessRegisterState>(
                   listener: (context, state) {
                     if (state is BusinessRegisterSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Kayıt Başarılı!')));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Kayıt Başarılı!')),
+                      );
+                      Navigator.pop(context); // Önceki ekrana dön
                     } else if (state is BusinessRegisterFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
                     }
                   },
                   builder: (context, state) {
@@ -135,17 +158,39 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       onPressed: state is BusinessRegisterLoading
                           ? null
                           : () {
+                              // Validasyon
+                              if (passwordController.text !=
+                                  confirmPasswordController.text) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Şifreler eşleşmiyor")),
+                                );
+                                return;
+                              }
+
+                              if (companyType == null ||
+                                  latitude == null ||
+                                  longitude == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text("Lütfen tüm alanları doldurun")),
+                                );
+                                return;
+                              }
+
+                              // Event gönder
                               context.read<BusinessRegisterBloc>().add(
                                     BusinessRegisterSubmitted(
                                       marketName: marketNameController.text,
-                                      companyType: companyType ?? '',
+                                      companyType: companyType!,
                                       firstName: firstNameController.text,
                                       lastName: lastNameController.text,
                                       username: userNameController.text,
                                       email: emailController.text,
                                       password: passwordController.text,
-                                      latitude: latitude ?? 0,
-                                      longitude: longitude ?? 0,
+                                      latitude: latitude!,
+                                      longitude: longitude!,
                                     ),
                                   );
                             },
@@ -155,7 +200,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         minimumSize: const Size(double.infinity, 50),
                       ),
                     );
