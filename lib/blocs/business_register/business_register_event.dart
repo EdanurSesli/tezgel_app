@@ -17,6 +17,7 @@ class BusinessRegisterSubmitted extends BusinessRegisterEvent {
   final String password;
   final double latitude;
   final double longitude;
+  final String closingTime;  // string olarak alıyoruz
 
   const BusinessRegisterSubmitted({
     required this.marketName,
@@ -28,6 +29,7 @@ class BusinessRegisterSubmitted extends BusinessRegisterEvent {
     required this.password,
     required this.latitude,
     required this.longitude,
+    required this.closingTime,
   });
 
   @override
@@ -41,5 +43,6 @@ class BusinessRegisterSubmitted extends BusinessRegisterEvent {
         password,
         latitude,
         longitude,
+        closingTime,
       ];
 }

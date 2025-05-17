@@ -1,29 +1,38 @@
-import 'package:dio/dio.dart';
-import 'package:tezgel_app/blocs/business_register/business_register_bloc.dart';
-import 'package:tezgel_app/models/register_models/business_register_request.dart';
-import '../models/register_models/user_register_request.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../models/register_models/business_register_request.dart';
 import '../models/register_models/base_register_response.dart';
 import '../constants.dart';
 
 class BusinessRegisterService {
-  final Dio _dio;
-
-  BusinessRegisterService({Dio? dio}) : _dio = dio ?? Dio();
-
   Future<BaseRegisterResponse> businessregister(BusinessRegisterRequest request) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/register-business');
+    final requestBody = jsonEncode(request.toJson());
+    print('Gönderilen request body: $requestBody'); // Burada yazdırdık
+
     try {
-      final response = await _dio.post(
-        '${ApiConstants.baseUrl}/Auth/register-business',
-        data: request.toJson(),
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          // Gerekirse ek header'lar buraya eklenebilir (ör: Authorization)
+        },
+        body: requestBody,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return BaseRegisterResponse.fromJson(response.data);
+        final jsonData = jsonDecode(response.body);
+        return BaseRegisterResponse.fromJson(jsonData);
       } else {
+        print('Beklenmeyen durum kodu: ${response.statusCode}');
+        print('Response body: ${response.body}');
         throw Exception('Beklenmeyen durum kodu: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      throw Exception('Kayıt isteği başarısız: ${e.message}');
+    } catch (e, stackTrace) {
+      print('HTTP isteği sırasında hata oluştu: $e');
+      print('Stack trace:\n$stackTrace');
+      throw Exception('Kayıt isteği başarısız: $e');
     }
   }
 }
+

@@ -25,6 +25,7 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
   String? companyType;
   double? latitude;
   double? longitude;
+  TimeOfDay? closingTime;
 
   final List<String> companyTypes = [
     'Anonim Şirket (A.Ş.)',
@@ -130,6 +131,36 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       : 'Henüz konum seçilmedi.',
                 ),
                 const SizedBox(height: 20),
+                const Text('Kapanış Saati',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: closingTime ?? TimeOfDay(hour: 17, minute: 0),
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        closingTime = picked;
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: Text(
+                    closingTime != null
+                        ? 'Seçilen Kapanış Saati: ${closingTime!.format(context)}'
+                        : 'Kapanış Saatini Seç',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 TextField(
                     controller: passwordController,
                     obscureText: true,
@@ -146,7 +177,7 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Kayıt Başarılı!')),
                       );
-                      Navigator.pop(context); // Önceki ekrana dön
+                      Navigator.pop(context);
                     } else if (state is BusinessRegisterFailure) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
@@ -158,28 +189,22 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                       onPressed: state is BusinessRegisterLoading
                           ? null
                           : () {
-                              // Validasyon
-                              if (passwordController.text !=
-                                  confirmPasswordController.text) {
+                              if (passwordController.text != confirmPasswordController.text) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Şifreler eşleşmiyor")),
+                                  const SnackBar(content: Text("Şifreler eşleşmiyor")),
+                                );
+                                return;
+                              }
+                              if (companyType == null || latitude == null || longitude == null || closingTime == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Lütfen tüm alanları doldurun")),
                                 );
                                 return;
                               }
 
-                              if (companyType == null ||
-                                  latitude == null ||
-                                  longitude == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text("Lütfen tüm alanları doldurun")),
-                                );
-                                return;
-                              }
+                              final closingTimeStr =
+                                  '${closingTime!.hour.toString().padLeft(2, '0')}:${closingTime!.minute.toString().padLeft(2, '0')}';
 
-                              // Event gönder
                               context.read<BusinessRegisterBloc>().add(
                                     BusinessRegisterSubmitted(
                                       marketName: marketNameController.text,
@@ -191,6 +216,7 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                                       password: passwordController.text,
                                       latitude: latitude!,
                                       longitude: longitude!,
+                                      closingTime: closingTimeStr,
                                     ),
                                   );
                             },

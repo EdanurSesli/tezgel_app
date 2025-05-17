@@ -19,22 +19,21 @@ class BusinessRegisterBloc extends Bloc<BusinessRegisterEvent, BusinessRegisterS
   ) async {
     emit(BusinessRegisterLoading());
     try {
-      // Modeli oluştur
       final request = BusinessRegisterRequest(
         firstName: event.firstName,
         lastName: event.lastName,
         email: event.email,
         password: event.password,
         userName: event.username,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        closingTime: event.closingTime,  // string olarak direkt gönder
         companyName: event.marketName,
         companyType: event.companyType,
-        closingTime: ClosingTime(ticks: 0), // Örnek değer
       );
 
-      // Servis çağrısı
       final response = await _service.businessregister(request);
 
-      // Başarı durumu
       if (response.isSuccess == true) {
         emit(BusinessRegisterSuccess());
       } else {

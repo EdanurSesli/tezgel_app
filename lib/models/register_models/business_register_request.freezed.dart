@@ -15,14 +15,16 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$BusinessRegisterRequest {
-  String? get firstName;
-  String? get lastName;
-  String? get email;
-  String? get password;
-  String? get userName;
-  ClosingTime? get closingTime;
-  String? get companyName;
-  String? get companyType;
+  String get firstName;
+  String get lastName;
+  String get email;
+  String get password;
+  String get userName;
+  double get latitude;
+  double get longitude;
+  String get closingTime; // "HH:mm" formatında string
+  String get companyName;
+  String get companyType;
 
   /// Create a copy of BusinessRegisterRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -49,6 +51,10 @@ mixin _$BusinessRegisterRequest {
                 other.password == password) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.closingTime, closingTime) ||
                 other.closingTime == closingTime) &&
             (identical(other.companyName, companyName) ||
@@ -59,12 +65,22 @@ mixin _$BusinessRegisterRequest {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, firstName, lastName, email,
-      password, userName, closingTime, companyName, companyType);
+  int get hashCode => Object.hash(
+      runtimeType,
+      firstName,
+      lastName,
+      email,
+      password,
+      userName,
+      latitude,
+      longitude,
+      closingTime,
+      companyName,
+      companyType);
 
   @override
   String toString() {
-    return 'BusinessRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, closingTime: $closingTime, companyName: $companyName, companyType: $companyType)';
+    return 'BusinessRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, latitude: $latitude, longitude: $longitude, closingTime: $closingTime, companyName: $companyName, companyType: $companyType)';
   }
 }
 
@@ -75,16 +91,16 @@ abstract mixin class $BusinessRegisterRequestCopyWith<$Res> {
       _$BusinessRegisterRequestCopyWithImpl;
   @useResult
   $Res call(
-      {String? firstName,
-      String? lastName,
-      String? email,
-      String? password,
-      String? userName,
-      ClosingTime? closingTime,
-      String? companyName,
-      String? companyType});
-
-  $ClosingTimeCopyWith<$Res>? get closingTime;
+      {String firstName,
+      String lastName,
+      String email,
+      String password,
+      String userName,
+      double latitude,
+      double longitude,
+      String closingTime,
+      String companyName,
+      String companyType});
 }
 
 /// @nodoc
@@ -100,63 +116,59 @@ class _$BusinessRegisterRequestCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-    Object? email = freezed,
-    Object? password = freezed,
-    Object? userName = freezed,
-    Object? closingTime = freezed,
-    Object? companyName = freezed,
-    Object? companyType = freezed,
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? email = null,
+    Object? password = null,
+    Object? userName = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? closingTime = null,
+    Object? companyName = null,
+    Object? companyType = null,
   }) {
     return _then(_self.copyWith(
-      firstName: freezed == firstName
+      firstName: null == firstName
           ? _self.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
+              as String,
+      lastName: null == lastName
           ? _self.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
+              as String,
+      email: null == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
+              as String,
+      password: null == password
           ? _self.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userName: freezed == userName
+              as String,
+      userName: null == userName
           ? _self.userName
           : userName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      closingTime: freezed == closingTime
+              as String,
+      latitude: null == latitude
+          ? _self.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      longitude: null == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      closingTime: null == closingTime
           ? _self.closingTime
           : closingTime // ignore: cast_nullable_to_non_nullable
-              as ClosingTime?,
-      companyName: freezed == companyName
+              as String,
+      companyName: null == companyName
           ? _self.companyName
           : companyName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      companyType: freezed == companyType
+              as String,
+      companyType: null == companyType
           ? _self.companyType
           : companyType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
-  }
-
-  /// Create a copy of BusinessRegisterRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ClosingTimeCopyWith<$Res>? get closingTime {
-    if (_self.closingTime == null) {
-      return null;
-    }
-
-    return $ClosingTimeCopyWith<$Res>(_self.closingTime!, (value) {
-      return _then(_self.copyWith(closingTime: value));
-    });
   }
 }
 
@@ -164,33 +176,40 @@ class _$BusinessRegisterRequestCopyWithImpl<$Res>
 @JsonSerializable()
 class _BusinessRegisterRequest implements BusinessRegisterRequest {
   const _BusinessRegisterRequest(
-      {this.firstName,
-      this.lastName,
-      this.email,
-      this.password,
-      this.userName,
-      this.closingTime,
-      this.companyName,
-      this.companyType});
+      {required this.firstName,
+      required this.lastName,
+      required this.email,
+      required this.password,
+      required this.userName,
+      required this.latitude,
+      required this.longitude,
+      required this.closingTime,
+      required this.companyName,
+      required this.companyType});
   factory _BusinessRegisterRequest.fromJson(Map<String, dynamic> json) =>
       _$BusinessRegisterRequestFromJson(json);
 
   @override
-  final String? firstName;
+  final String firstName;
   @override
-  final String? lastName;
+  final String lastName;
   @override
-  final String? email;
+  final String email;
   @override
-  final String? password;
+  final String password;
   @override
-  final String? userName;
+  final String userName;
   @override
-  final ClosingTime? closingTime;
+  final double latitude;
   @override
-  final String? companyName;
+  final double longitude;
   @override
-  final String? companyType;
+  final String closingTime;
+// "HH:mm" formatında string
+  @override
+  final String companyName;
+  @override
+  final String companyType;
 
   /// Create a copy of BusinessRegisterRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -222,6 +241,10 @@ class _BusinessRegisterRequest implements BusinessRegisterRequest {
                 other.password == password) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.closingTime, closingTime) ||
                 other.closingTime == closingTime) &&
             (identical(other.companyName, companyName) ||
@@ -232,12 +255,22 @@ class _BusinessRegisterRequest implements BusinessRegisterRequest {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, firstName, lastName, email,
-      password, userName, closingTime, companyName, companyType);
+  int get hashCode => Object.hash(
+      runtimeType,
+      firstName,
+      lastName,
+      email,
+      password,
+      userName,
+      latitude,
+      longitude,
+      closingTime,
+      companyName,
+      companyType);
 
   @override
   String toString() {
-    return 'BusinessRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, closingTime: $closingTime, companyName: $companyName, companyType: $companyType)';
+    return 'BusinessRegisterRequest(firstName: $firstName, lastName: $lastName, email: $email, password: $password, userName: $userName, latitude: $latitude, longitude: $longitude, closingTime: $closingTime, companyName: $companyName, companyType: $companyType)';
   }
 }
 
@@ -250,17 +283,16 @@ abstract mixin class _$BusinessRegisterRequestCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? firstName,
-      String? lastName,
-      String? email,
-      String? password,
-      String? userName,
-      ClosingTime? closingTime,
-      String? companyName,
-      String? companyType});
-
-  @override
-  $ClosingTimeCopyWith<$Res>? get closingTime;
+      {String firstName,
+      String lastName,
+      String email,
+      String password,
+      String userName,
+      double latitude,
+      double longitude,
+      String closingTime,
+      String companyName,
+      String companyType});
 }
 
 /// @nodoc
@@ -276,203 +308,58 @@ class __$BusinessRegisterRequestCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-    Object? email = freezed,
-    Object? password = freezed,
-    Object? userName = freezed,
-    Object? closingTime = freezed,
-    Object? companyName = freezed,
-    Object? companyType = freezed,
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? email = null,
+    Object? password = null,
+    Object? userName = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? closingTime = null,
+    Object? companyName = null,
+    Object? companyType = null,
   }) {
     return _then(_BusinessRegisterRequest(
-      firstName: freezed == firstName
+      firstName: null == firstName
           ? _self.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
+              as String,
+      lastName: null == lastName
           ? _self.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
+              as String,
+      email: null == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
+              as String,
+      password: null == password
           ? _self.password
           : password // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userName: freezed == userName
+              as String,
+      userName: null == userName
           ? _self.userName
           : userName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      closingTime: freezed == closingTime
+              as String,
+      latitude: null == latitude
+          ? _self.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      longitude: null == longitude
+          ? _self.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      closingTime: null == closingTime
           ? _self.closingTime
           : closingTime // ignore: cast_nullable_to_non_nullable
-              as ClosingTime?,
-      companyName: freezed == companyName
+              as String,
+      companyName: null == companyName
           ? _self.companyName
           : companyName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      companyType: freezed == companyType
+              as String,
+      companyType: null == companyType
           ? _self.companyType
           : companyType // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-
-  /// Create a copy of BusinessRegisterRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ClosingTimeCopyWith<$Res>? get closingTime {
-    if (_self.closingTime == null) {
-      return null;
-    }
-
-    return $ClosingTimeCopyWith<$Res>(_self.closingTime!, (value) {
-      return _then(_self.copyWith(closingTime: value));
-    });
-  }
-}
-
-/// @nodoc
-mixin _$ClosingTime {
-  int? get ticks;
-
-  /// Create a copy of ClosingTime
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $ClosingTimeCopyWith<ClosingTime> get copyWith =>
-      _$ClosingTimeCopyWithImpl<ClosingTime>(this as ClosingTime, _$identity);
-
-  /// Serializes this ClosingTime to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is ClosingTime &&
-            (identical(other.ticks, ticks) || other.ticks == ticks));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, ticks);
-
-  @override
-  String toString() {
-    return 'ClosingTime(ticks: $ticks)';
-  }
-}
-
-/// @nodoc
-abstract mixin class $ClosingTimeCopyWith<$Res> {
-  factory $ClosingTimeCopyWith(
-          ClosingTime value, $Res Function(ClosingTime) _then) =
-      _$ClosingTimeCopyWithImpl;
-  @useResult
-  $Res call({int? ticks});
-}
-
-/// @nodoc
-class _$ClosingTimeCopyWithImpl<$Res> implements $ClosingTimeCopyWith<$Res> {
-  _$ClosingTimeCopyWithImpl(this._self, this._then);
-
-  final ClosingTime _self;
-  final $Res Function(ClosingTime) _then;
-
-  /// Create a copy of ClosingTime
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? ticks = freezed,
-  }) {
-    return _then(_self.copyWith(
-      ticks: freezed == ticks
-          ? _self.ticks
-          : ticks // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _ClosingTime implements ClosingTime {
-  const _ClosingTime({this.ticks});
-  factory _ClosingTime.fromJson(Map<String, dynamic> json) =>
-      _$ClosingTimeFromJson(json);
-
-  @override
-  final int? ticks;
-
-  /// Create a copy of ClosingTime
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$ClosingTimeCopyWith<_ClosingTime> get copyWith =>
-      __$ClosingTimeCopyWithImpl<_ClosingTime>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$ClosingTimeToJson(
-      this,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _ClosingTime &&
-            (identical(other.ticks, ticks) || other.ticks == ticks));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, ticks);
-
-  @override
-  String toString() {
-    return 'ClosingTime(ticks: $ticks)';
-  }
-}
-
-/// @nodoc
-abstract mixin class _$ClosingTimeCopyWith<$Res>
-    implements $ClosingTimeCopyWith<$Res> {
-  factory _$ClosingTimeCopyWith(
-          _ClosingTime value, $Res Function(_ClosingTime) _then) =
-      __$ClosingTimeCopyWithImpl;
-  @override
-  @useResult
-  $Res call({int? ticks});
-}
-
-/// @nodoc
-class __$ClosingTimeCopyWithImpl<$Res> implements _$ClosingTimeCopyWith<$Res> {
-  __$ClosingTimeCopyWithImpl(this._self, this._then);
-
-  final _ClosingTime _self;
-  final $Res Function(_ClosingTime) _then;
-
-  /// Create a copy of ClosingTime
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? ticks = freezed,
-  }) {
-    return _then(_ClosingTime(
-      ticks: freezed == ticks
-          ? _self.ticks
-          : ticks // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String,
     ));
   }
 }
