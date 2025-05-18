@@ -29,3 +29,12 @@ class UserRegisterFailure extends UserRegisterState {
   @override
   List<Object?> get props => [error];
 }
+
+class UserRegisterValidationError extends UserRegisterState {
+  final Map<String, String> errors;
+
+  const UserRegisterValidationError(this.errors);
+
+  @override
+  List<Object?> get props => [errors];
+}

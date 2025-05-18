@@ -22,9 +22,11 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController birthDateController = TextEditingController();
 
   double? latitude;
   double? longitude;
+  DateTime? selectedBirthDate;
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
@@ -39,6 +41,22 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         color: Colors.green,
       ),
     );
+  }
+
+  // Add this method for date selection
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        selectedBirthDate = picked;
+        birthDateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
   }
 
   @override
@@ -109,6 +127,17 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                     controller: confirmPasswordController,
                     obscureText: true,
                     decoration: _inputDecoration('Şifre Doğrulama')),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: birthDateController,
+                  readOnly: true,
+                  decoration: _inputDecoration('Doğum Tarihi').copyWith(
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 30),
                 BlocConsumer<UserRegisterBloc, UserRegisterState>(
                   listener: (context, state) {
@@ -132,12 +161,10 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                       userName: usernameController.text,
                                       email: emailController.text,
                                       password: passwordController.text,
-                                      latitude:
-                                          latitude, // double olarak atandı
-                                      longitude:
-                                          longitude, // double olarak atandı
+                                      latitude: latitude,
+                                      longitude: longitude,
                                       address: addressController.text,
-                                      birthDate: DateTime(2000, 1, 1),
+                                      birthDate: selectedBirthDate,
                                     )),
                                   );
                             },
