@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tezgel_app/models/login_models/login_response_model.dart';
 import 'package:tezgel_app/services/login_service.dart';
+import 'package:tezgel_app/services/verify_email_service.dart';
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
+import '../models/login_models/login_response_model.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'verify_email_screen.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,15 +43,36 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is LoginFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
                   );
                 }
                 if (state is LoginSuccess) {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const VerifyEmailScreen()));
+                  if (state.loginResponse.data != null &&
+                      state.loginResponse.data!.emailConfirmed != null &&
+                      !state.loginResponse.data!.emailConfirmed!) {
+                    // Doğrulama kodu gönder
+                    try {
+                      await VerifyEmailService().sendCode(state.loginResponse.data!.accessToken!);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VerifyEmailScreen(token: state.loginResponse.data!.accessToken!),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Doğrulama kodu gönderilemedi: $e")),
+                      );
+                    }
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  }
                 }
               },
               child: Column(

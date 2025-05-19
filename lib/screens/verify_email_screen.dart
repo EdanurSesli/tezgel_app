@@ -1,29 +1,43 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tezgel_app/screens/home_screen.dart';
+import 'package:tezgel_app/services/verify_email_service.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({super.key});
+  final String token;
+
+  const VerifyEmailScreen({super.key, required this.token});
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
 }
 
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
-  List<String> codeDigits = ["", "", "", ""];
+  final VerifyEmailService _verifyEmailService = VerifyEmailService();
+  List<String> codeDigits = ["", "", "", "", "", ""]; // 6 hane
   late Timer _timer;
   int _secondsRemaining = 60;
   bool isResendAvailable = false;
 
-  final TextEditingController _digit1Controller = TextEditingController();
-  final TextEditingController _digit2Controller = TextEditingController();
-  final TextEditingController _digit3Controller = TextEditingController();
-  final TextEditingController _digit4Controller = TextEditingController();
+  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
 
   @override
   void initState() {
     super.initState();
+    _sendVerificationCode();
     startTimer();
+  }
+
+  Future<void> _sendVerificationCode() async {
+    try {
+      await _verifyEmailService.sendCode(widget.token);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
   }
 
   void startTimer() {
@@ -42,42 +56,64 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     });
   }
 
-  void resendCode() {
-    setState(() {
-      codeDigits = ["", "", "", ""];
-      _digit1Controller.clear();
-      _digit2Controller.clear();
-      _digit3Controller.clear();
-      _digit4Controller.clear();
-      isResendAvailable = false;
-    });
-    startTimer();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Yeni kod gönderildi!')),
-    );
-  }
-
-  void verifyCode() {
+  Future<void> verifyCode() async {
     String enteredCode = codeDigits.join();
-    if (enteredCode.length == 4) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+    if (enteredCode.length == 6) {
+      try {
+        await _verifyEmailService.verifyCode(widget.token, enteredCode);
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString())),
+          );
+        }
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen 4 haneli kodu girin')),
+        const SnackBar(content: Text('Lütfen 6 haneli kodu girin')),
       );
+    }
+  }
+
+  void resendCode() async {
+    try {
+      await _verifyEmailService.sendCode(widget.token);
+      setState(() {
+        codeDigits = ["", "", "", "", "", ""];
+        for (final controller in _controllers) {
+          controller.clear();
+        }
+        isResendAvailable = false;
+      });
+      startTimer();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Yeni kod gönderildi!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
     }
   }
 
   Widget _buildCodeBox(TextEditingController controller, int index) {
     return Container(
-      width: 60,
+      width: 48,
       height: 60,
       decoration: BoxDecoration(
         color: Colors.white,
-        shape: BoxShape.circle,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -100,9 +136,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           onChanged: (value) {
             if (value.isNotEmpty) {
               codeDigits[index] = value;
-              if (index < 3) {
+              if (index < 5) {
                 FocusScope.of(context).nextFocus();
               }
+            } else {
+              codeDigits[index] = "";
             }
           },
         ),
@@ -113,10 +151,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   @override
   void dispose() {
     _timer.cancel();
-    _digit1Controller.dispose();
-    _digit2Controller.dispose();
-    _digit3Controller.dispose();
-    _digit4Controller.dispose();
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -159,12 +196,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCodeBox(_digit1Controller, 0),
-                    _buildCodeBox(_digit2Controller, 1),
-                    _buildCodeBox(_digit3Controller, 2),
-                    _buildCodeBox(_digit4Controller, 3),
-                  ],
+                  children: List.generate(6, (i) => _buildCodeBox(_controllers[i], i)),
                 ),
                 const SizedBox(height: 20),
                 Text(

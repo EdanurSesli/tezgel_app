@@ -27,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       // Örnek: token var mı, login başarılı mı vs.
 
       if (response.data!.accessToken != null && response.data!.accessToken!.isNotEmpty) {
-        emit(LoginSuccess());
+        emit(LoginSuccess( response));
       } else {
         emit(const LoginFailure(error: "Geçersiz kullanıcı adı veya şifre"));
       }
