@@ -10,7 +10,7 @@ import '../models/login_models/login_response_model.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'verify_email_screen.dart';
-import 'home_screen.dart';
+import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -70,9 +70,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     }
                   } else {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => const MainScreen(), // MainScreen'e yönlendir
+                      ),
+                      (route) => false,
                     );
                   }
                 }

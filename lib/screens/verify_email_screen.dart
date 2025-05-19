@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tezgel_app/screens/home_screen.dart';
+import 'package:tezgel_app/screens/main_screen.dart'; // MainScreen'i import et
 import 'package:tezgel_app/services/verify_email_service.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final VerifyEmailService _verifyEmailService = VerifyEmailService();
   List<String> codeDigits = ["", "", "", "", "", ""]; // 6 hane
   late Timer _timer;
-  int _secondsRemaining = 60;
+  int _secondsRemaining = 180; // Changed from 60 to 180
   bool isResendAvailable = false;
 
   final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
@@ -41,7 +42,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   void startTimer() {
-    _secondsRemaining = 60;
+    _secondsRemaining = 180; // Changed from 60 to 180
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (_secondsRemaining == 0) {
         setState(() {
@@ -65,7 +66,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           if (mounted) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => const MainScreen()), // MainScreen'e yönlendir
             );
           }
         } else {
@@ -208,7 +209,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  "Code expires in : 00:${_secondsRemaining.toString().padLeft(2, '0')}",
+                  "Code expires in : ${(_secondsRemaining ~/ 60).toString().padLeft(2, '0')}:${(_secondsRemaining % 60).toString().padLeft(2, '0')}", // Modified to show minutes:seconds
                   style: const TextStyle(
                     color: Colors.orange,
                     fontWeight: FontWeight.bold,
