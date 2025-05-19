@@ -43,28 +43,30 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) async {
+              listener: (context, state) {
                 if (state is LoginFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
                   );
                 }
                 if (state is LoginSuccess) {
-                  if (state.loginResponse.data != null &&
-                      state.loginResponse.data!.emailConfirmed != null &&
-                      !state.loginResponse.data!.emailConfirmed!) {
-                    // Doğrulama kodu gönder
+                  if (state.loginResponse.data?.emailConfirmed == false) {
+                    // Create email verification code and navigate
+                    final verifyService = VerifyEmailService();
                     try {
-                      await VerifyEmailService().sendCode(state.loginResponse.data!.accessToken!);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => VerifyEmailScreen(token: state.loginResponse.data!.accessToken!),
-                        ),
-                      );
+                      verifyService.sendCode(state.loginResponse.data!.accessToken!).then((_) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => VerifyEmailScreen(
+                              token: state.loginResponse.data!.accessToken!,
+                            ),
+                          ),
+                        );
+                      });
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Doğrulama kodu gönderilemedi: $e")),
+                        SnackBar(content: Text(e.toString())),
                       );
                     }
                   } else {

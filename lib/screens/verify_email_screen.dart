@@ -60,12 +60,20 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     String enteredCode = codeDigits.join();
     if (enteredCode.length == 6) {
       try {
-        await _verifyEmailService.verifyCode(widget.token, enteredCode);
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-          );
+        final result = await _verifyEmailService.verifyCode(widget.token, enteredCode);
+        if (result.isSuccess == true) {
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Doğrulama kodu hatalı')),
+            );
+          }
         }
       } catch (e) {
         if (mounted) {
