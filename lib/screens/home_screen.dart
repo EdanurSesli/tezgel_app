@@ -145,12 +145,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    product.imagePath,
-                                    width: double.infinity,
-                                    height: 180,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: product.imagePath.startsWith('http') 
+                                      ? Image.network(
+                                          product.imagePath,
+                                          width: double.infinity,
+                                          height: 180,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              width: double.infinity,
+                                              height: 180,
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.image_not_supported, size: 50),
+                                            );
+                                          },
+                                        )
+                                      : Container(
+                                          width: double.infinity,
+                                          height: 180,
+                                          color: Colors.grey[300],
+                                          child: const Icon(Icons.image_not_supported, size: 50),
+                                        ),
                                 ),
                                 const SizedBox(height: 12),
                                 Text(product.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -160,9 +175,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 12),
                                 Row(
                                   children: [
-                                    Text('₺\${product.originalPrice}', style: const TextStyle(fontSize: 16, color: Colors.grey, decoration: TextDecoration.lineThrough)),
+                                    Text(
+                                      '₺${product.originalPrice.toString()}', 
+                                      style: const TextStyle(
+                                        fontSize: 16, 
+                                        color: Colors.grey, 
+                                        decoration: TextDecoration.lineThrough
+                                      )
+                                    ),
                                     const SizedBox(width: 8),
-                                    Text('₺\${product.discountedPrice}', style: const TextStyle(fontSize: 18, color: Colors.orange, fontWeight: FontWeight.bold)),
+                                    Text(
+                                      '₺${product.discountedPrice.toString()}', 
+                                      style: const TextStyle(
+                                        fontSize: 18, 
+                                        color: Colors.orange, 
+                                        fontWeight: FontWeight.bold
+                                      )
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 12),
