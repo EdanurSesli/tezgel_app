@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     CategoriesScreen(),
-    SizedBox(), // Orta buton boşluk ekranı (isteğe bağlı)
+    SizedBox(), // Action button placeholder
     NotificationsScreen(),
     MyAccountScreen(),
   ];

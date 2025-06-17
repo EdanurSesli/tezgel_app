@@ -44,9 +44,9 @@ class BottomNavBarWidget extends StatelessWidget {
               label: 'Anasayfa',
             ),
             BottomNavigationBarItem(
-              icon: Icon(FeatherIcons.heart, color: Colors.grey),
-              activeIcon: Icon(FeatherIcons.heart, color: Colors.green),
-              label: 'Favoriler',
+              icon: Icon(FeatherIcons.grid, color: Colors.grey),
+              activeIcon: Icon(FeatherIcons.grid, color: Colors.green),
+              label: 'Kategoriler',
             ),
             BottomNavigationBarItem(
               icon: SizedBox.shrink(),

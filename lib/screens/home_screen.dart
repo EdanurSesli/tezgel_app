@@ -11,6 +11,56 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<BaseRegisterResponse> _productsFuture;
+  String? _selectedCategory;
+  String? _selectedLocation;
+
+  final List<Map<String, dynamic>> _categories = const [
+    {
+      'title': 'Baklagiller',
+      'icon': Icons.rice_bowl,
+      'color': Colors.orangeAccent,
+    },
+    {
+      'title': 'Sebzeler',
+      'icon': Icons.eco,
+      'color': Colors.green,
+    },
+    {
+      'title': 'Meyveler',
+      'icon': Icons.apple,
+      'color': Colors.redAccent,
+    },
+    {
+      'title': 'Süt Ürünleri',
+      'icon': Icons.local_drink,
+      'color': Colors.blueAccent,
+    },
+    {
+      'title': 'Et & Tavuk',
+      'icon': Icons.set_meal,
+      'color': Colors.brown,
+    },
+    {
+      'title': 'Unlu Mamuller',
+      'icon': Icons.bakery_dining,
+      'color': Colors.amber,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _locations = const [
+    {
+      'city': 'İstanbul',
+      'districts': ['Kadıköy', 'Beşiktaş', 'Üsküdar']
+    },
+    {
+      'city': 'Ankara',
+      'districts': ['Çankaya', 'Keçiören', 'Yenimahalle']
+    },
+    {
+      'city': 'İzmir',
+      'districts': ['Konak', 'Bornova', 'Karşıyaka']
+    },
+  ];
 
   @override
   void initState() {
@@ -36,9 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildSearchButton(Icons.search, 'Text'),
-                  _buildSearchButton(Icons.category, 'Category'),
-                  _buildSearchButton(Icons.location_on, 'Location'),
+                  _buildSearchButton(Icons.search, 'Text', onTap: () {}),
+                  _buildSearchButton(Icons.category, 'Category', onTap: () {
+                    _showCategoryFilter(context);
+                  }),
+                  _buildSearchButton(Icons.location_on, 'Location', onTap: () {
+                    _showLocationFilter(context);
+                  }),
                 ],
               ),
             ),
@@ -55,14 +109,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Center(child: Text('Hata: ${snapshot.error}'));
                   } else if (snapshot.hasData) {
                     final products = (snapshot.data?.data ?? []) as List;
-                    if (products.isEmpty) {
+                    // Kategori ve lokasyon filtresi uygula
+                    var filteredProducts = products;
+                    if (_selectedCategory != null) {
+                      filteredProducts = filteredProducts.where((product) =>
+                        product['productCategory'] == _selectedCategory).toList();
+                    }
+                    if (_selectedLocation != null) {
+                      filteredProducts = filteredProducts.where((product) =>
+                        product['productLocation'] == _selectedLocation).toList();
+                    }
+                    if (filteredProducts.isEmpty) {
                       return const Center(child: Text('Ürün bulunamadı.'));
                     }
                     return ListView.builder(
                       padding: const EdgeInsets.all(16),
-                      itemCount: products.length,
+                      itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
-                        final product = products[index];
+                        final product = filteredProducts[index];
                         // product içeriği modeline göre doldurulmalı
                         return Card(
                           elevation: 4,
@@ -126,6 +190,132 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showCategoryFilter(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Kategoriler',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ..._categories.map((category) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: category['color'],
+                      child: Icon(category['icon'], color: Colors.white),
+                    ),
+                    title: Text(category['title']),
+                    trailing: _selectedCategory == category['title']
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category['title'];
+                      });
+                      Navigator.pop(context);
+                    },
+                  )),
+              ListTile(
+                leading: const Icon(Icons.clear),
+                title: const Text('Filtreyi Temizle'),
+                onTap: () {
+                  setState(() {
+                    _selectedCategory = null;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLocationFilter(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            final List<Widget> locationWidgets = [
+              const Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 8),
+                child: Center(
+                  child: Text(
+                    'İl ve İlçeler',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ];
+
+            for (var loc in _locations) {
+              locationWidgets.add(
+                ListTile(
+                  title: Text(loc['city'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                  enabled: false,
+                ),
+              );
+              for (var district in loc['districts']) {
+                locationWidgets.add(
+                  ListTile(
+                    leading: const Icon(Icons.location_on, color: Colors.green),
+                    title: Text('${loc['city']} - $district'),
+                    trailing: _selectedLocation == '${loc['city']} - $district'
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        _selectedLocation = '${loc['city']} - $district';
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                );
+              }
+            }
+
+            locationWidgets.add(
+              ListTile(
+                leading: const Icon(Icons.clear),
+                title: const Text('Filtreyi Temizle'),
+                onTap: () {
+                  setState(() {
+                    _selectedLocation = null;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            );
+
+            return ListView(
+              controller: scrollController,
+              children: locationWidgets,
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _infoRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -139,9 +329,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchButton(IconData icon, String label) {
+  Widget _buildSearchButton(IconData icon, String label, {required VoidCallback onTap}) {
     return OutlinedButton.icon(
-      onPressed: () {},
+      onPressed: onTap,
       icon: Icon(icon, color: Colors.green),
       label: Text(label, style: const TextStyle(color: Colors.green)),
       style: OutlinedButton.styleFrom(
