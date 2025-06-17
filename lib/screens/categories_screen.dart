@@ -43,7 +43,9 @@ class CategoriesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Kategoriler'),
         centerTitle: true,
+        backgroundColor: Colors.white,
         elevation: 1,
+        foregroundColor: Colors.black,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

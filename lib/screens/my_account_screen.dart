@@ -13,7 +13,7 @@ class MyAccountScreen extends StatelessWidget {
         title: const Text('Hesabım'),
         centerTitle: true,
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         foregroundColor: Colors.black,
       ),
       body: SafeArea(
