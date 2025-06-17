@@ -13,6 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<BaseRegisterResponse> _productsFuture;
   String? _selectedCategory;
   String? _selectedLocation;
+  String _searchText = '';
 
   final List<Map<String, dynamic>> _categories = const [
     {
@@ -76,23 +77,62 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            const Text(
-              'LOGO',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
+            const Text('LOGO',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildSearchButton(Icons.search, 'Text', onTap: () {}),
-                  _buildSearchButton(Icons.category, 'Category', onTap: () {
-                    _showCategoryFilter(context);
-                  }),
-                  _buildSearchButton(Icons.location_on, 'Location', onTap: () {
-                    _showLocationFilter(context);
-                  }),
+                  Expanded(
+                    flex: 8,
+                    child: SizedBox(
+                      height: 48,
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() => _searchText = value);
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Ürün ara...',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon: const Icon(Icons.search, color: Colors.green),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: Color(0xFFD7D7E0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: Color(0xFFD7D7E0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: Colors.green, width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: _buildSearchButton(
+                      Icons.category,
+                      onTap: () => _showCategoryFilter(context),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: _buildSearchButton(
+                      Icons.location_on,
+                      onTap: () => _showLocationFilter(context),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -118,6 +158,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (_selectedLocation != null) {
                       filteredProducts = filteredProducts.where((product) =>
                         product['productLocation'] == _selectedLocation).toList();
+                    }
+                    if (_searchText.isNotEmpty) {
+                      filteredProducts = filteredProducts.where((product) =>
+                        product['productName'].toLowerCase().contains(_searchText.toLowerCase())).toList();
                     }
                     if (filteredProducts.isEmpty) {
                       return const Center(child: Text('Ürün bulunamadı.'));
@@ -329,16 +373,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchButton(IconData icon, String label, {required VoidCallback onTap}) {
-    return OutlinedButton.icon(
+  Widget _buildSearchButton(IconData icon, {required VoidCallback onTap}) {
+    return OutlinedButton(
       onPressed: onTap,
-      icon: Icon(icon, color: Colors.green),
-      label: Text(label, style: const TextStyle(color: Colors.green)),
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Color(0xFFD7D7E0)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        backgroundColor: Colors.white,
+        padding: EdgeInsets.zero,
       ),
+      child: Icon(icon, color: Colors.green, size: 24),
     );
   }
 }
