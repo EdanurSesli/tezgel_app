@@ -1,22 +1,23 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:tezgel_app/models/register_models/base_register_response.dart';
+import '../models/product_model.dart';
 import '../constants.dart';
 
 class ProductService {
-  Future<BaseRegisterResponse> getProduct() async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/Product/available');
+  Future<ProductResponse> getProduct(String token) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/Product/available');
 
     final response = await http.get(
       url,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return BaseRegisterResponse.fromJson(data);
+      return ProductResponse.fromJson(data);
     } else {
       throw Exception('Ürün listeleme başarısız: ${response.statusCode} ${response.body}');
     }

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:tezgel_app/models/login_models/login_request_model.dart';
 import 'package:tezgel_app/models/login_models/login_response_model.dart';
 import '../constants.dart';
+import 'storage_service.dart';
 
 class LoginService {
   Future<LoginResponseModel> login(LoginRequestModel request) async {
@@ -18,7 +19,15 @@ class LoginService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = json.decode(response.body);
-      return LoginResponseModel.fromJson(data);
+      final loginResponse = LoginResponseModel.fromJson(data);
+      
+      // Save token after successful login
+      final accessToken = loginResponse.data?.accessToken;
+      if (accessToken != null) {
+        await StorageService.saveToken(accessToken);
+      }
+      
+      return loginResponse;
     } else {
       throw Exception('Login başarısız: ${response.statusCode} ${response.body}');
     }
