@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/home/home_bloc.dart';
-import '../blocs/home/home_event.dart';
-import '../blocs/home/home_state.dart';
+import '../services/product_services.dart';
+import '../models/register_models/base_register_response.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,104 +10,119 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Future<BaseRegisterResponse> _productsFuture;
+
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeBloc()..add(LoadHomeData()),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF9F9F9),
-        body: SafeArea(
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if (state is HomeLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is HomeLoaded) {
-                return _buildHomeContent(state);
-              } else if (state is HomeError) {
-                return Center(child: Text(state.error));
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _productsFuture = ProductService().getProduct();
   }
 
-  Widget _buildHomeContent(HomeLoaded state) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        const Text(
-          'LOGO',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildSearchButton(Icons.search, 'Text'),
-              _buildSearchButton(Icons.category, 'Category'),
-              _buildSearchButton(Icons.location_on, 'Location'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Divider(color: Color(0xFFD7D7E0), thickness: 2, indent: 16, endIndent: 16),
-        const SizedBox(height: 8),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        state.imagePath,
-                        width: double.infinity,
-                        height: 180,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(state.productName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    _infoRow(Icons.location_on, state.productLocation),
-                    _infoRow(Icons.category, state.productCategory),
-                    _infoRow(Icons.access_time, state.productTime),
-                    _infoRow(Icons.apartment, state.businessName),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Text('₺${state.oldPrice}', style: const TextStyle(fontSize: 16, color: Colors.grey, decoration: TextDecoration.lineThrough)),
-                        const SizedBox(width: 8),
-                        Text('₺${state.newPrice}', style: const TextStyle(fontSize: 18, color: Colors.orange, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(state.description, style: const TextStyle(color: Colors.grey)),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), minimumSize: const Size(double.infinity, 50)),
-                      child: const Text('Detayları Gör', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            const Text(
+              'LOGO',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSearchButton(Icons.search, 'Text'),
+                  _buildSearchButton(Icons.category, 'Category'),
+                  _buildSearchButton(Icons.location_on, 'Location'),
+                ],
               ),
             ),
-          ),
+            const SizedBox(height: 8),
+            const Divider(color: Color(0xFFD7D7E0), thickness: 2, indent: 16, endIndent: 16),
+            const SizedBox(height: 8),
+            Expanded(
+              child: FutureBuilder<BaseRegisterResponse>(
+                future: _productsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Hata: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    final products = (snapshot.data?.data ?? []) as List;
+                    if (products.isEmpty) {
+                      return const Center(child: Text('Ürün bulunamadı.'));
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        // product içeriği modeline göre doldurulmalı
+                        return Card(
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (product['imagePath'] != null)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      product['imagePath'],
+                                      width: double.infinity,
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                const SizedBox(height: 12),
+                                Text(product['productName'] ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 8),
+                                _infoRow(Icons.location_on, product['productLocation'] ?? ''),
+                                _infoRow(Icons.category, product['productCategory'] ?? ''),
+                                _infoRow(Icons.access_time, product['productTime'] ?? ''),
+                                _infoRow(Icons.apartment, product['businessName'] ?? ''),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    if (product['oldPrice'] != null)
+                                      Text('₺${product['oldPrice']}', style: const TextStyle(fontSize: 16, color: Colors.grey, decoration: TextDecoration.lineThrough)),
+                                    const SizedBox(width: 8),
+                                    if (product['newPrice'] != null)
+                                      Text('₺${product['newPrice']}', style: const TextStyle(fontSize: 18, color: Colors.orange, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(product['description'] ?? '', style: const TextStyle(color: Colors.grey)),
+                                const SizedBox(height: 12),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), minimumSize: const Size(double.infinity, 50)),
+                                  child: const Text('Detayları Gör', style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
