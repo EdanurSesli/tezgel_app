@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart'; // Cupertino (iOS) navigasyonu için
+import 'package:flutter/cupertino.dart';
+import 'package:tezgel_app/screens/customer_service.dart'; // Cupertino (iOS) navigasyonu için
 
 class MyAccountScreen extends StatelessWidget {
   const MyAccountScreen({super.key});
@@ -56,7 +57,7 @@ class MyAccountScreen extends StatelessWidget {
                 const SizedBox(height: 32),
 
                 // Profil Bilgiler Kartı
-                _buildProfileInfoCard(),
+                _buildProfileInfoCard(context),
 
                 const SizedBox(height: 32),
 
@@ -91,7 +92,7 @@ class MyAccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileInfoCard() {
+  Widget _buildProfileInfoCard(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -114,7 +115,10 @@ class MyAccountScreen extends StatelessWidget {
 
             // Müşteri Hizmetleri ve Ürün Ekle Butonları
             _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
-              // Müşteri hizmetleri sayfasına yönlendir
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CustomerServiceScreen()),
+              );
             }),
             const SizedBox(height: 16),
             _buildActionButton(Icons.add_box, 'Ürün Ekle', () {
