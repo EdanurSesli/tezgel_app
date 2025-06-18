@@ -20,12 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchText = '';
   String? _token;
 
-  final List<Map<String, dynamic>> _locations = const [
-    {'city': 'İstanbul', 'districts': ['Kadıköy', 'Beşiktaş', 'Üsküdar']},
-    {'city': 'Ankara', 'districts': ['Çankaya', 'Keçiören', 'Yenimahalle']},
-    {'city': 'İzmir', 'districts': ['Konak', 'Bornova', 'Karşıyaka']},
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -103,110 +97,115 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(color: Color(0xFFD7D7E0), thickness: 2, indent: 16, endIndent: 16),
             const SizedBox(height: 8),
             Expanded(
-              child: FutureBuilder<ProductResponse>(
-                future: _productsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Hata: ${snapshot.error}'));
-                  } else if (snapshot.hasData) {
-                    List<Product> products = snapshot.data!.data;
-                    var filteredProducts = products.where((product) {
-                      final matchesCategory = _selectedCategory == null || product.categoryName == _selectedCategory;
-                      final matchesSearch = _searchText.isEmpty || product.name.toLowerCase().contains(_searchText.toLowerCase());
-                      return matchesCategory && matchesSearch;
-                    }).toList();
-
-                    if (filteredProducts.isEmpty) {
-                      return const Center(child: Text('Ürün bulunamadı.'));
-                    }
-
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = filteredProducts[index];
-                        return Card(
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: product.imagePath.startsWith('http') 
-                                      ? Image.network(
-                                          product.imagePath,
-                                          width: double.infinity,
-                                          height: 180,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Container(
-                                              width: double.infinity,
-                                              height: 180,
-                                              color: Colors.grey[300],
-                                              child: const Icon(Icons.image_not_supported, size: 50),
-                                            );
-                                          },
-                                        )
-                                      : Container(
-                                          width: double.infinity,
-                                          height: 180,
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.image_not_supported, size: 50),
-                                        ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(product.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 8),
-                                _infoRow(Icons.category, product.categoryName),
-                                _infoRow(Icons.description, product.description),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '₺${product.originalPrice.toString()}', 
-                                      style: const TextStyle(
-                                        fontSize: 16, 
-                                        color: Colors.grey, 
-                                        decoration: TextDecoration.lineThrough
-                                      )
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      '₺${product.discountedPrice.toString()}', 
-                                      style: const TextStyle(
-                                        fontSize: 18, 
-                                        color: Colors.orange, 
-                                        fontWeight: FontWeight.bold
-                                      )
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    minimumSize: const Size(double.infinity, 50),
-                                  ),
-                                  child: const Text('Detayları Gör', style: TextStyle(color: Colors.white)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _initializeProducts();
                 },
+                child: FutureBuilder<ProductResponse>(
+                  future: _productsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Hata: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      List<Product> products = snapshot.data!.data;
+                      var filteredProducts = products.where((product) {
+                        final matchesCategory = _selectedCategory == null || product.categoryName == _selectedCategory;
+                        final matchesSearch = _searchText.isEmpty || product.name.toLowerCase().contains(_searchText.toLowerCase());
+                        return matchesCategory && matchesSearch;
+                      }).toList();
+
+                      if (filteredProducts.isEmpty) {
+                        return const Center(child: Text('Ürün bulunamadı.'));
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = filteredProducts[index];
+                          return Card(
+                            elevation: 4,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: product.imagePath.startsWith('http') 
+                                        ? Image.network(
+                                            product.imagePath,
+                                            width: double.infinity,
+                                            height: 180,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Container(
+                                                width: double.infinity,
+                                                height: 180,
+                                                color: Colors.grey[300],
+                                                child: const Icon(Icons.image_not_supported, size: 50),
+                                              );
+                                            },
+                                          )
+                                        : Container(
+                                            width: double.infinity,
+                                            height: 180,
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.image_not_supported, size: 50),
+                                          ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(product.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 8),
+                                  _infoRow(Icons.category, product.categoryName),
+                                  _infoRow(Icons.description, product.description),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '₺${product.originalPrice.toString()}', 
+                                        style: const TextStyle(
+                                          fontSize: 16, 
+                                          color: Colors.grey, 
+                                          decoration: TextDecoration.lineThrough
+                                        )
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '₺${product.discountedPrice.toString()}', 
+                                        style: const TextStyle(
+                                          fontSize: 18, 
+                                          color: Colors.orange, 
+                                          fontWeight: FontWeight.bold
+                                        )
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                      minimumSize: const Size(double.infinity, 50),
+                                    ),
+                                    child: const Text('Detayları Gör', style: TextStyle(color: Colors.white)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
               ),
             ),
           ],

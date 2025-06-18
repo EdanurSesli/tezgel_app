@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:tezgel_app/screens/customer_service.dart'; // Cupertino (iOS) navigasyonu için
+import 'package:tezgel_app/services/product_services.dart';
+import 'package:tezgel_app/models/product_models/product_request.dart';
+import 'package:tezgel_app/services/storage_service.dart';
+import 'package:tezgel_app/models/register_models/base_register_response.dart';
+import 'package:tezgel_app/services/category_services.dart';
+import 'package:tezgel_app/models/category/category_response.dart';
 
 class MyAccountScreen extends StatelessWidget {
   const MyAccountScreen({super.key});
@@ -121,13 +127,174 @@ class MyAccountScreen extends StatelessWidget {
               );
             }),
             const SizedBox(height: 16),
-            _buildActionButton(Icons.add_box, 'Ürün Ekle', () {
-              // Ürün ekleme sayfasına yönlendir
+            _buildActionButton(Icons.add_box, 'Ürün Ekle', () async {
+              await _showAddProductDialog(context);
             }),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _showAddProductDialog(BuildContext context) async {
+    final _formKey = GlobalKey<FormState>();
+    String name = '';
+    String description = '';
+    String? categoryName;
+    String imagePath = '';
+    double? originalPrice;
+    double? discountedPrice;
+
+    List<CategoryData> categories = [];
+    bool loading = true;
+    String? error;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            if (loading) {
+              CategoryService().getCategories().then((res) {
+                setState(() {
+                  categories = res.data ?? [];
+                  loading = false;
+                });
+              }).catchError((e) {
+                setState(() {
+                  error = "Kategoriler yüklenemedi";
+                  loading = false;
+                });
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (error != null) {
+              return AlertDialog(
+                title: const Text('Hata'),
+                content: Text(error!),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Kapat'),
+                  ),
+                ],
+              );
+            }
+            return AlertDialog(
+              title: const Text('Ürün Ekle'),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Ürün Adı'),
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => name = v ?? '',
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Açıklama'),
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => description = v ?? '',
+                      ),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(labelText: 'Kategori'),
+                        value: categoryName,
+                        items: categories
+                            .map((cat) => DropdownMenuItem(
+                                  value: cat.name,
+                                  child: Text(cat.name ?? ''),
+                                ))
+                            .toList(),
+                        onChanged: (val) => setState(() => categoryName = val),
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => categoryName = v,
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Resim URL'),
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => imagePath = v ?? '',
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Orijinal Fiyat'),
+                        keyboardType: TextInputType.number,
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => originalPrice = double.tryParse(v ?? ''),
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'İndirimli Fiyat'),
+                        keyboardType: TextInputType.number,
+                        validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
+                        onSaved: (v) => discountedPrice = double.tryParse(v ?? ''),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('İptal'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      _formKey.currentState?.save();
+                      Navigator.pop(context); // dialogu kapat
+                      await _createProduct(
+                        context,
+                        name,
+                        description,
+                        categoryName!,
+                        imagePath,
+                        originalPrice!,
+                        discountedPrice!,
+                      );
+                    }
+                  },
+                  child: const Text('Ekle'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _createProduct(
+    BuildContext context,
+    String name,
+    String description,
+    String categoryName,
+    String imagePath,
+    double originalPrice,
+    double discountedPrice,
+  ) async {
+    try {
+      final token = await StorageService.getToken();
+      if (token == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Oturum bulunamadı')));
+        return;
+      }
+      final request = ProductRequest(
+        name: name,
+        description: description,
+        categoryId: categoryName,
+        imagePath: imagePath,
+        originalPrice: originalPrice,
+        discountedPrice: discountedPrice,
+      );
+      final response = await ProductService().createProduct(token, request);
+      if (response.isSuccess == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ürün başarıyla eklendi')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hata: ${response.message ?? "Ürün eklenemedi"}')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hata: $e')));
+    }
   }
 
   Widget _buildActionButton(IconData icon, String title, VoidCallback onPressed) {
