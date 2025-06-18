@@ -161,6 +161,49 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                   ),
                 ],
               ),
+              SizedBox(height: 16),
+              Center(
+                child: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red, size: 28),
+                  onPressed: () async {
+                    final shouldDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Ürünü Sil'),
+                          content: Text('Bu ürünü silmek istediğinizden emin misiniz?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('İptal'),
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                            TextButton(
+                              child: Text('Onayla', style: TextStyle(color: Colors.red)),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (shouldDelete == true) {
+                      try {
+                        final token = await StorageService.getToken() ?? '';
+                        await ProductService().deleteProduct(token, product.id ?? '');
+                        Navigator.pop(context); // Close detail modal
+                        _loadProducts(); // Refresh product list
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Ürün başarıyla silindi')),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Ürün silinirken hata oluştu: $e')),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
