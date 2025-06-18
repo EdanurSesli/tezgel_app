@@ -4,8 +4,7 @@ import 'package:tezgel_app/screens/customer_service.dart';
 import 'package:tezgel_app/screens/my_products_screen.dart';
 import 'package:tezgel_app/screens/product_add_screen.dart';
 import 'package:tezgel_app/services/user_info_services.dart';
-import 'package:tezgel_app/models/business_profile/business_profile_response.dart';
-import 'package:tezgel_app/models/customer_models/customer_profie_response.dart';
+import 'package:intl/intl.dart';
 
 class MyAccountScreen extends StatefulWidget {
   const MyAccountScreen({super.key});
@@ -128,8 +127,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     if (userData == null) return const SizedBox.shrink();
 
     final Map<String, dynamic> infoMap = userData.toJson();
-    final bool isBusiness = role?.toLowerCase() == 'business';
-
     final fieldLabels = {
       'firstName': 'Ad',
       'lastName': 'Soyad',
@@ -152,7 +149,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       'birthDate': Icons.cake,
     };
 
-    // Mevcut olan ve boş olmayan alanları filtrele
     final validFields = fieldLabels.keys.where((key) =>
         infoMap[key] != null && infoMap[key].toString().trim().isNotEmpty);
 
@@ -160,6 +156,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
+      color: const Color(0xFFFFF0E8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
@@ -167,9 +164,12 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           children: [
             for (final key in validFields) ...[
               _buildInfoRow(
-                  iconMap[key] ?? Icons.info,
-                  fieldLabels[key] ?? key,
-                  infoMap[key].toString()),
+                iconMap[key] ?? Icons.info,
+                fieldLabels[key] ?? key,
+                key == 'birthDate'
+                    ? _formatDate(infoMap[key].toString())
+                    : infoMap[key].toString(),
+              ),
               const SizedBox(height: 16),
             ],
             _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
@@ -189,13 +189,22 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             _buildActionButton(Icons.list, 'Ürünlerim', () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) =>  MyProductsScreen()),
+                MaterialPageRoute(builder: (_) => MyProductsScreen()),
               );
             }),
           ],
         ),
       ),
     );
+  }
+
+  String _formatDate(String isoDate) {
+    try {
+      final date = DateTime.parse(isoDate);
+      return DateFormat('dd.MM.yyyy').format(date);
+    } catch (e) {
+      return isoDate;
+    }
   }
 
   Widget _buildInfoRow(IconData icon, String title, String value) {
