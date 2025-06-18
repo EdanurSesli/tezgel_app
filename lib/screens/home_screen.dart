@@ -109,10 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Hata: ${snapshot.error}'));
                     } else if (snapshot.hasData) {
-                      List<Product> products = snapshot.data!.data;
+                      List<Product> products = snapshot.data!.data ?? [];
                       var filteredProducts = products.where((product) {
-                        final matchesCategory = _selectedCategory == null || product.categoryName == _selectedCategory;
-                        final matchesSearch = _searchText.isEmpty || product.name.toLowerCase().contains(_searchText.toLowerCase());
+                        final matchesCategory = _selectedCategory == null || (product.categoryName ?? '') == _selectedCategory;
+                        final matchesSearch = _searchText.isEmpty || (product.name ?? '').toLowerCase().contains(_searchText.toLowerCase());
                         return matchesCategory && matchesSearch;
                       }).toList();
 
@@ -136,9 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: product.imagePath.startsWith('http') 
+                                    child: (product.imagePath != null && product.imagePath!.startsWith('http')) 
                                         ? Image.network(
-                                            product.imagePath,
+                                            product.imagePath!,
                                             width: double.infinity,
                                             height: 180,
                                             fit: BoxFit.cover,
@@ -159,30 +159,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                   ),
                                   const SizedBox(height: 12),
-                                  Text(product.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                  Text(product.name ?? '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 8),
-                                  _infoRow(Icons.category, product.categoryName),
-                                  _infoRow(Icons.description, product.description),
+                                  _infoRow(Icons.category, product.categoryName ?? ''),
+                                  _infoRow(Icons.description, product.description ?? ''),
                                   const SizedBox(height: 12),
                                   Row(
                                     children: [
-                                      Text(
-                                        '₺${product.originalPrice.toString()}', 
-                                        style: const TextStyle(
-                                          fontSize: 16, 
-                                          color: Colors.grey, 
-                                          decoration: TextDecoration.lineThrough
-                                        )
-                                      ),
+                                      if (product.originalPrice != null)
+                                        Text(
+                                          '₺${product.originalPrice.toString()}', 
+                                          style: const TextStyle(
+                                            fontSize: 16, 
+                                            color: Colors.grey, 
+                                            decoration: TextDecoration.lineThrough
+                                          )
+                                        ),
                                       const SizedBox(width: 8),
-                                      Text(
-                                        '₺${product.discountedPrice.toString()}', 
-                                        style: const TextStyle(
-                                          fontSize: 18, 
-                                          color: Colors.orange, 
-                                          fontWeight: FontWeight.bold
-                                        )
-                                      ),
+                                      if (product.discountedPrice != null)
+                                        Text(
+                                          '₺${product.discountedPrice.toString()}', 
+                                          style: const TextStyle(
+                                            fontSize: 18, 
+                                            color: Colors.orange, 
+                                            fontWeight: FontWeight.bold
+                                          )
+                                        ),
                                     ],
                                   ),
                                   const SizedBox(height: 12),

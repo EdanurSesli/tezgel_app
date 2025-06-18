@@ -8,6 +8,7 @@ import 'package:tezgel_app/models/register_models/base_register_response.dart';
 import 'package:tezgel_app/services/category_services.dart';
 import 'package:tezgel_app/models/category/category_response.dart';
 import 'package:tezgel_app/screens/product_add_screen.dart';
+import 'my_products_screen.dart';
 
 class MyAccountScreen extends StatelessWidget {
   const MyAccountScreen({super.key});
@@ -117,7 +118,7 @@ class MyAccountScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildInfoRow(Icons.comment, 'Yorumlar', 'Ürün ve Satıcı Yorumlarım'),
             const SizedBox(height: 16),
-            _buildInfoRow(Icons.add_shopping_cart, 'Satılık Ürünler', 'Ekmek, Pasta, Çörek vb.'),
+            _buildInfoRow(Icons.add_shopping_cart, 'Ürünlerim', 'Ekmek, Pasta, Çörek vb.'),
             const SizedBox(height: 16),
 
             // Müşteri Hizmetleri ve Ürün Ekle Butonları
@@ -132,6 +133,13 @@ class MyAccountScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ProductAddScreen()),
+              );
+            }),
+            const SizedBox(height: 16),
+            _buildActionButton(Icons.list, 'Ürünlerim', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyProductsScreen()),
               );
             }),
           ],

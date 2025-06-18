@@ -4,6 +4,7 @@ import '../models/product_models/product_model.dart';
 import '../models/register_models/base_register_response.dart';
 import '../models/product_models/product_request.dart';
 import '../constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
   Future<ProductResponse> getProduct(String token) async {
@@ -50,4 +51,26 @@ class ProductService {
       throw Exception('Ürün oluşturulamadı: ${response.body}');
     }
   }
+
+  Future<ProductResponse> getAllProducts(String token) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/Business/all-product');
+    
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ProductResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Ürün oluşturulamadı: ${response.body}');
+    }
+  }
+
 }
