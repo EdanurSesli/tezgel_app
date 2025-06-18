@@ -179,19 +179,22 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               );
             }),
             const SizedBox(height: 16),
-            _buildActionButton(Icons.add_box, 'Ürün Ekle', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProductAddScreen()),
-              );
-            }),
-            const SizedBox(height: 16),
-            _buildActionButton(Icons.list, 'Ürünlerim', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => MyProductsScreen()),
-              );
-            }),
+            if (role == 'Business') ...[
+              _buildActionButton(Icons.add_box, 'Ürün Ekle', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductAddScreen()),
+                );
+              }),
+              const SizedBox(height: 16),
+              _buildActionButton(Icons.list, 'Ürünlerim', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => MyProductsScreen()),
+                );
+              }),
+              const SizedBox(height: 16),
+            ],
           ],
         ),
       ),
