@@ -57,6 +57,14 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         foregroundColor: Colors.black,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: isLoading || userData == null
+                ? null
+                : () => _showEditProfileSheet(context),
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -240,6 +248,172 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       ),
       icon: Icon(icon),
       label: Text(title, style: const TextStyle(fontSize: 18)),
+    );
+  }
+
+  void _showEditProfileSheet(BuildContext context) {
+    final infoMap = userData.toJson();
+    final fieldLabels = {
+      'firstName': 'Ad',
+      'lastName': 'Soyad',
+      'email': 'Email',
+      'companyName': 'İşletme',
+      'companyType': 'İşletme Türü',
+      'closingTime': 'Kapanış Saati',
+      'address': 'Adres',
+      'birthDate': 'Doğum Tarihi',
+    };
+
+    final editableFields = [
+      'firstName',
+      'lastName',
+      'email',
+      'companyName',
+      'companyType',
+      'closingTime',
+      'address',
+      'birthDate',
+    ];
+
+    final controllers = <String, TextEditingController>{};
+    for (final key in editableFields) {
+      controllers[key] = TextEditingController(text: infoMap[key]?.toString() ?? '');
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setModalState) {
+              bool updating = false;
+              String? errorMsg;
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Bilgilerini Düzenle',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  ...editableFields.map((key) {
+                    // Sadece mevcut olan alanları göster
+                    if (!infoMap.containsKey(key)) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: TextFormField(
+                        controller: controllers[key],
+                        decoration: InputDecoration(
+                          labelText: fieldLabels[key] ?? key,
+                          border: const OutlineInputBorder(),
+                        ),
+                        keyboardType: key == 'email'
+                            ? TextInputType.emailAddress
+                            : TextInputType.text,
+                        readOnly: key == 'email', // Email değiştirilemez
+                        onTap: key == 'birthDate'
+                            ? () async {
+                                DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: controllers[key]!.text.isNotEmpty
+                                      ? DateTime.tryParse(controllers[key]!.text) ?? DateTime.now()
+                                      : DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (picked != null) {
+                                  controllers[key]!.text = picked.toIso8601String();
+                                  setModalState(() {});
+                                }
+                              }
+                            : null,
+                      ),
+                    );
+                  }),
+                  if (errorMsg != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(errorMsg!, style: const TextStyle(color: Colors.red)),
+                    ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: updating
+                          ? null
+                          : () async {
+                              setModalState(() {
+                                updating = true;
+                                errorMsg = null;
+                              });
+                              try {
+                                final prefs = await SharedPreferences.getInstance();
+                                final token = prefs.getString('accessToken');
+                                if (token == null) throw Exception('Token bulunamadı');
+                                final updateData = <String, dynamic>{};
+                                for (final key in editableFields) {
+                                  if (controllers[key] != null) {
+                                    updateData[key] = controllers[key]!.text;
+                                  }
+                                }
+                                // Doğum tarihi formatı düzelt
+                                if (updateData['birthDate'] != null && updateData['birthDate'].toString().isNotEmpty) {
+                                  try {
+                                    final dt = DateTime.parse(updateData['birthDate']);
+                                    updateData['birthDate'] = dt.toIso8601String();
+                                  } catch (_) {}
+                                }
+                                dynamic updatedResponse;
+                                if (role?.toLowerCase() == 'business') {
+                                  updatedResponse = await updateBusinessProfile(token, updateData);
+                                } else if (role?.toLowerCase() == 'customer') {
+                                  updatedResponse = await updateCustomerProfile(token, updateData);
+                                }
+                                // Güncel verileri tekrar çek
+                                await _fetchUserInfo();
+                                Navigator.of(ctx).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Bilgiler başarıyla güncellendi')),
+                                );
+                              } catch (e) {
+                                setModalState(() {
+                                  errorMsg = 'Güncelleme başarısız: ${e.toString()}';
+                                  updating = false;
+                                });
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: updating
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Text('Güncelle', style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

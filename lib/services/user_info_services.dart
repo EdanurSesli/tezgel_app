@@ -49,6 +49,50 @@ Future<CustomerProfileResponse> getCustomerDetail(String token) async {
   }
 }
 
+// Business profilini güncelle
+Future<BusinessProfileResponse> updateBusinessProfile(String token, Map<String, dynamic> updateData) async {
+  final url = Uri.parse('${ApiConstants.baseUrl}/Business/update-profile');
+  final response = await http.put(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(updateData),
+  );
+
+  print('PUT Business Response Status: ${response.statusCode}');
+  print('PUT Business Response Body: ${response.body}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return BusinessProfileResponse.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Business profil güncellenemedi: ${response.body}');
+  }
+}
+
+// Customer profilini güncelle
+Future<CustomerProfileResponse> updateCustomerProfile(String token, Map<String, dynamic> updateData) async {
+  final url = Uri.parse('${ApiConstants.baseUrl}/Customer/update-profile');
+  final response = await http.put(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(updateData),
+  );
+
+  print('PUT Customer Response Status: ${response.statusCode}');
+  print('PUT Customer Response Body: ${response.body}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return CustomerProfileResponse.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Customer profil güncellenemedi: ${response.body}');
+  }
+}
+
 Future<dynamic> getUserProfile(String token, String role) async {
   if (role.toLowerCase() == 'business') {
     return await getBusinessDetail(token);
@@ -57,4 +101,6 @@ Future<dynamic> getUserProfile(String token, String role) async {
   } else {
     throw Exception('Geçersiz kullanıcı rolü');
   }
+
+  
 }
