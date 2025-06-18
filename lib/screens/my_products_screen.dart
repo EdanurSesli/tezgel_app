@@ -29,41 +29,135 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
     final token = await StorageService.getToken() ?? '';
     try {
       final detailResponse = await ProductService().getProductDetail(token, productId);
-      final product = detailResponse.data?.first; // varsayım: tek ürün dönüyor
+      final product = detailResponse.data?.first;
       if (product == null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ürün detayı bulunamadı.')));
         return;
       }
       showModalBottomSheet(
         context: context,
-        builder: (_) => Padding(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (_) => Container(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(product.name ?? '', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text(product.description ?? ''),
+              if (product.imagePath != null && product.imagePath!.isNotEmpty)
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      product.imagePath!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      product.name ?? '',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '₺${product.discountedPrice}',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      if (product.originalPrice != null && product.originalPrice != product.discountedPrice)
+                        Text(
+                          '₺${product.originalPrice}',
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  product.description ?? '',
+                  style: TextStyle(
+                    fontSize: 16, 
+                    height: 1.5,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
               SizedBox(height: 16),
               Row(
                 children: [
-                  ElevatedButton.icon(
-                    icon: Icon(product.isActive == true ? Icons.check_circle : Icons.cancel),
-                    label: Text(product.isActive == true ? 'Aktif' : 'Pasif'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: product.isActive == true ? Colors.green : Colors.red,
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: product.isActive == true ? Colors.green.shade100 : Colors.red.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            product.isActive == true ? Icons.check_circle : Icons.cancel,
+                            color: product.isActive == true ? Colors.green : Colors.red,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            product.isActive == true ? 'Aktif' : 'Pasif',
+                            style: TextStyle(
+                              color: product.isActive == true ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: null,
                   ),
                   SizedBox(width: 12),
-                  ElevatedButton.icon(
-                    icon: Icon(product.isReserved == true ? Icons.lock : Icons.lock_open),
-                    label: Text(product.isReserved == true ? 'Rezerve Edildi' : 'Rezerve Değil'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: product.isReserved == true ? Colors.orange : Colors.blueGrey,
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: product.isReserved == true ? Colors.orange.shade100 : Colors.blueGrey.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            product.isReserved == true ? Icons.lock : Icons.lock_open,
+                            color: product.isReserved == true ? Colors.orange : Colors.blueGrey,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            product.isReserved == true ? 'Rezerve' : 'Müsait',
+                            style: TextStyle(
+                              color: product.isReserved == true ? Colors.orange : Colors.blueGrey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: null,
                   ),
                 ],
               ),
