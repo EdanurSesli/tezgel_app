@@ -116,4 +116,25 @@ class ProductService {
     }
   }
 
+  Future<BaseRegisterResponse> isActiveProduct(String token, String productId) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/Business/product-isactive?productId=$productId');
+    
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return BaseRegisterResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Ürün detayları getirilemedi: ${response.body}');
+    }
+  }
+
 }

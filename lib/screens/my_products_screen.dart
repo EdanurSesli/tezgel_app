@@ -107,28 +107,68 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: product.isActive == true ? Colors.green.shade100 : Colors.red.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            product.isActive == true ? Icons.check_circle : Icons.cancel,
-                            color: product.isActive == true ? Colors.green : Colors.red,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            product.isActive == true ? 'Aktif' : 'Pasif',
-                            style: TextStyle(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final status = product.isActive == true ? 'pasif' : 'aktif';
+                        final shouldToggle = await showDialog<bool>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Durum Değiştir'),
+                              content: Text('Bu ürünü $status yapmak istediğinizden emin misiniz?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('İptal'),
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                ),
+                                TextButton(
+                                  child: Text('Onayla'),
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (shouldToggle == true) {
+                          try {
+                            final token = await StorageService.getToken() ?? '';
+                            await ProductService().isActiveProduct(token, product.id ?? '');
+                            Navigator.pop(context); // Close detail modal
+                            _loadProducts(); // Refresh product list
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Ürün durumu başarıyla güncellendi')),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Durum güncellenirken hata oluştu: $e')),
+                            );
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: product.isActive == true ? Colors.green.shade100 : Colors.red.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              product.isActive == true ? Icons.check_circle : Icons.cancel,
                               color: product.isActive == true ? Colors.green : Colors.red,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 8),
+                            Text(
+                              product.isActive == true ? 'Aktif' : 'Pasif',
+                              style: TextStyle(
+                                color: product.isActive == true ? Colors.green : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
