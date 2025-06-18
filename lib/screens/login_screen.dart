@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tezgel_app/models/login_models/login_response_model.dart';
 import 'package:tezgel_app/services/login_service.dart';
 import 'package:tezgel_app/services/verify_email_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
@@ -43,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
+              listener: (context, state) async {
                 if (state is LoginFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
                 if (state is LoginSuccess) {
                   if (state.loginResponse.data?.emailConfirmed == false) {
-                    // Create email verification code and navigate
+                    // Email doğrulama gerekli, doğrulama ekranına yönlendir
                     final verifyService = VerifyEmailService();
                     try {
                       verifyService.sendCode(state.loginResponse.data!.accessToken!).then((_) {
@@ -70,9 +71,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     }
                   } else {
+                    // Save token and role to SharedPreferences
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString('accessToken', state.loginResponse.data!.accessToken!);
+                    await prefs.setString('role', state.loginResponse.data!.role ?? '');
+
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (_) => const MainScreen(), // MainScreen'e yönlendir
+                        builder: (_) => const MainScreen(),
                       ),
                       (route) => false,
                     );

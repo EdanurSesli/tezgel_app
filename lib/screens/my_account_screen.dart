@@ -9,9 +9,55 @@ import 'package:tezgel_app/services/category_services.dart';
 import 'package:tezgel_app/models/category/category_response.dart';
 import 'package:tezgel_app/screens/product_add_screen.dart';
 import 'my_products_screen.dart';
+import 'package:tezgel_app/services/user_info_services.dart';
+import 'package:tezgel_app/models/business_profile/business_profile_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class MyAccountScreen extends StatelessWidget {
+class MyAccountScreen extends StatefulWidget {
   const MyAccountScreen({super.key});
+
+  @override
+  State<MyAccountScreen> createState() => _MyAccountScreenState();
+}
+
+class _MyAccountScreenState extends State<MyAccountScreen> {
+  BusinessData? userData;
+  String? role;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserInfo();
+  }
+
+  Future<void> _fetchUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('accessToken');
+    final userRole = prefs.getString('role');
+    if (token != null && userRole != null) {
+      try {
+        final response = await getUserProfile(token, userRole);
+        setState(() {
+          userData = response.data;
+          role = userRole;
+          isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        // Hata göster
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kullanıcı bilgileri alınamadı')),
+        );
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,83 +70,82 @@ class MyAccountScreen extends StatelessWidget {
         elevation: 1,
         foregroundColor: Colors.black,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                const SizedBox(height: 24),
-
-                // Profil Fotoğrafı
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                    'https://i.pravatar.cc/150?img=2', // Örnek profil fotoğrafı
-                  ),
-                ),
-                
-                const SizedBox(height: 16),
-
-                // Kullanıcı Adı
-                const Text(
-                  'Edanur Sesli',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Email
-                const Text(
-                  'edanursesli@example.com',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Profil Bilgiler Kartı
-                _buildProfileInfoCard(context),
-
-                const SizedBox(height: 32),
-
-                // Çıkış Butonu
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Çıkış işlemi burada yapılacak ve login sayfasına yönlendirilecek
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 24),
+                      // Profil Fotoğrafı
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
+                          'https://i.pravatar.cc/150?img=2',
+                        ),
                       ),
-                    ),
-                    icon: const Icon(Icons.logout),
-                    label: const Text(
-                      'Çıkış Yap',
-                      style: TextStyle(fontSize: 18),
-                    ),
+                      const SizedBox(height: 16),
+                      // Kullanıcı Adı
+                      Text(
+                        userData != null
+                            ? '${userData!.firstName ?? ''} ${userData!.lastName ?? ''}'
+                            : 'Kullanıcı',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Email
+                      Text(
+                        userData?.email ?? '',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      _buildProfileInfoCard(context),
+                      const SizedBox(height: 32),
+                      // Çıkış Butonu
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('accessToken');
+                            await prefs.remove('role');
+                            Navigator.pushReplacementNamed(context, '/login');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.logout),
+                          label: const Text(
+                            'Çıkış Yap',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 32),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
   Widget _buildProfileInfoCard(BuildContext context) {
+    if (userData == null) {
+      return const SizedBox.shrink();
+    }
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -110,18 +155,23 @@ class MyAccountScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow(Icons.phone, 'Telefon', '+90 501 201 38 44'),
+            if (userData?.firstName != null)
+              _buildInfoRow(Icons.person, 'Ad Soyad',
+                  '${userData!.firstName ?? ''} ${userData!.lastName ?? ''}'),
+            if (userData?.email != null) ...[
+              const SizedBox(height: 16),
+              _buildInfoRow(Icons.email, 'Email', userData!.email ?? ''),
+            ],
+            if (role == 'business' && userData?.companyName != null) ...[
+              const SizedBox(height: 16),
+              _buildInfoRow(Icons.business, 'İşletme', userData!.companyName ?? ''),
+            ],
+            if (role == 'business' && userData?.companyType != null) ...[
+              const SizedBox(height: 16),
+              _buildInfoRow(Icons.category, 'İşletme Türü', userData!.companyType ?? ''),
+            ],
+            // ...diğer bilgiler...
             const SizedBox(height: 16),
-            _buildInfoRow(Icons.location_on, 'Konum', 'Bakırköy, İstanbul'),
-            const SizedBox(height: 16),
-            _buildInfoRow(Icons.business, 'İşletme', 'Kardeşler Fırın'),
-            const SizedBox(height: 16),
-            _buildInfoRow(Icons.comment, 'Yorumlar', 'Ürün ve Satıcı Yorumlarım'),
-            const SizedBox(height: 16),
-            _buildInfoRow(Icons.add_shopping_cart, 'Ürünlerim', 'Ekmek, Pasta, Çörek vb.'),
-            const SizedBox(height: 16),
-
-            // Müşteri Hizmetleri ve Ürün Ekle Butonları
             _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
               Navigator.push(
                 context,
