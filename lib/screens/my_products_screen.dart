@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tezgel_app/models/product_models/all_product_response.dart';
+import 'package:tezgel_app/models/product_models/product_repeat_model.dart';
 import '../services/product_services.dart';
 import '../models/product_models/product_model.dart';
 import '../services/storage_service.dart';
@@ -108,48 +109,52 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () async {
-                        final status = product.isActive == true ? 'pasif' : 'aktif';
-                        final shouldToggle = await showDialog<bool>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Durum Değiştir'),
-                              content: Text('Bu ürünü $status yapmak istediğinizden emin misiniz?'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('İptal'),
-                                  onPressed: () => Navigator.of(context).pop(false),
-                                ),
-                                TextButton(
-                                  child: Text('Onayla'),
-                                  onPressed: () => Navigator.of(context).pop(true),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                      onTap: product.isActive == true
+                          ? () async {
+                              // Sadece aktifken pasife çekilebilir
+                              final shouldToggle = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Durum Değiştir'),
+                                    content: Text('Bu ürünü pasif yapmak istediğinizden emin misiniz?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('İptal'),
+                                        onPressed: () => Navigator.of(context).pop(false),
+                                      ),
+                                      TextButton(
+                                        child: Text('Onayla'),
+                                        onPressed: () => Navigator.of(context).pop(true),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
 
-                        if (shouldToggle == true) {
-                          try {
-                            final token = await StorageService.getToken() ?? '';
-                            await ProductService().isActiveProduct(token, product.id ?? '');
-                            Navigator.pop(context); // Close detail modal
-                            _loadProducts(); // Refresh product list
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Ürün durumu başarıyla güncellendi')),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Durum güncellenirken hata oluştu: $e')),
-                            );
-                          }
-                        }
-                      },
+                              if (shouldToggle == true) {
+                                try {
+                                  final token = await StorageService.getToken() ?? '';
+                                  await ProductService().isActiveProduct(token, product.id ?? '');
+                                  Navigator.pop(context); // Close detail modal
+                                  _loadProducts(); // Refresh product list
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Ürün durumu başarıyla güncellendi')),
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Durum güncellenirken hata oluştu: $e')),
+                                  );
+                                }
+                              }
+                            }
+                          : null, // Pasifken tıklanamaz
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                         decoration: BoxDecoration(
-                          color: product.isActive == true ? Colors.green.shade100 : Colors.red.shade100,
+                          color: product.isActive == true
+                              ? Colors.green.shade100
+                              : Colors.grey.shade300, // Pasifken gri
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -157,13 +162,13 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                           children: [
                             Icon(
                               product.isActive == true ? Icons.check_circle : Icons.cancel,
-                              color: product.isActive == true ? Colors.green : Colors.red,
+                              color: product.isActive == true ? Colors.green : Colors.grey,
                             ),
                             SizedBox(width: 8),
                             Text(
                               product.isActive == true ? 'Aktif' : 'Pasif',
                               style: TextStyle(
-                                color: product.isActive == true ? Colors.green : Colors.red,
+                                color: product.isActive == true ? Colors.green : Colors.grey,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -201,6 +206,97 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                   ),
                 ],
               ),
+              // --- YENİDEN AKTİF ET BUTONU EKLENDİ ---
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Center(
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.refresh, color: Colors.white),
+                    label: Text('Yeniden Aktif Et'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: product.isActive == false ? Colors.green : Colors.grey,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: product.isActive == false
+                        ? () async {
+                            final originalPriceController = TextEditingController(
+                              text: product.originalPrice?.toString() ?? '',
+                            );
+                            final discountedPriceController = TextEditingController(
+                              text: product.discountedPrice?.toString() ?? '',
+                            );
+                            final result = await showDialog<Map<String, int>>(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Fiyatları Girin'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextField(
+                                        controller: originalPriceController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(labelText: 'Eski Fiyat (₺)'),
+                                      ),
+                                      TextField(
+                                        controller: discountedPriceController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(labelText: 'Yeni Fiyat (₺)'),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('İptal'),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                    ),
+                                    TextButton(
+                                      child: Text('Kaydet'),
+                                      onPressed: () {
+                                        final original = int.tryParse(originalPriceController.text);
+                                        final discounted = int.tryParse(discountedPriceController.text);
+                                        if (original != null && discounted != null) {
+                                          Navigator.of(context).pop({
+                                            'originalPrice': original,
+                                            'discountedPrice': discounted,
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            if (result != null && result['originalPrice'] != null && result['discountedPrice'] != null) {
+                              try {
+                                final token = await StorageService.getToken() ?? '';
+                                await ProductService().repeatProduct(
+                                  token,
+                                  product.id ?? '',
+                                  ProductRepeatModel(
+                                    productId: product.id,
+                                    originalPrice: result['originalPrice'],
+                                    discountedPrice: result['discountedPrice'],
+                                  ),
+                                );
+                                Navigator.pop(context); // Close detail modal
+                                _loadProducts(); // Refresh product list
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Ürün yeniden aktif edildi')),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Yeniden aktif edilirken hata oluştu: $e')),
+                                );
+                              }
+                            }
+                          }
+                        : null, // Aktifken tıklanamaz
+                  ),
+                ),
+              ),
+              // --- YENİDEN AKTİF ET SONU ---
               SizedBox(height: 16),
               Center(
                 child: IconButton(
