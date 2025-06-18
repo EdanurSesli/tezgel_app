@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tezgel_app/models/product_model.dart';
+import 'package:tezgel_app/models/category/category_response.dart';
+import 'package:tezgel_app/models/product_models/product_model.dart';
 import '../services/product_services.dart';
-import '../services/storage_service.dart'; // Yeni import
+import '../services/storage_service.dart';
+import '../services/category_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,19 +14,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<ProductResponse> _productsFuture;
+  late Future<List<CategoryData>> _categoriesFuture;
   String? _selectedCategory;
   String? _selectedLocation;
   String _searchText = '';
-  String? _token; // Token için yeni değişken
-
-  final List<Map<String, dynamic>> _categories = const [
-    {'title': 'Baklagiller', 'icon': Icons.rice_bowl, 'color': Colors.orangeAccent},
-    {'title': 'Sebzeler', 'icon': Icons.eco, 'color': Colors.green},
-    {'title': 'Meyveler', 'icon': Icons.apple, 'color': Colors.redAccent},
-    {'title': 'Süt Ürünleri', 'icon': Icons.local_drink, 'color': Colors.blueAccent},
-    {'title': 'Et & Tavuk', 'icon': Icons.set_meal, 'color': Colors.brown},
-    {'title': 'Unlu Mamuller', 'icon': Icons.bakery_dining, 'color': Colors.amber},
-  ];
+  String? _token;
 
   final List<Map<String, dynamic>> _locations = const [
     {'city': 'İstanbul', 'districts': ['Kadıköy', 'Beşiktaş', 'Üsküdar']},
@@ -36,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initializeProducts();
+    _categoriesFuture = _fetchCategories();
   }
 
   Future<void> _initializeProducts() async {
@@ -45,6 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _productsFuture = ProductService().getProduct(_token!);
       });
     }
+  }
+
+  Future<List<CategoryData>> _fetchCategories() async {
+    final response = await CategoryService().getCategories();
+    return response.data ?? [];
   }
 
   @override
@@ -96,12 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 48,
                     child: _buildSearchButton(Icons.category, onTap: () => _showCategoryFilter(context)),
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    height: 48,
-                    width: 48,
-                    child: _buildSearchButton(Icons.location_on, onTap: () => _showLocationFilter(context)),
-                  ),
                 ],
               ),
             ),
@@ -120,9 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     List<Product> products = snapshot.data!.data;
                     var filteredProducts = products.where((product) {
                       final matchesCategory = _selectedCategory == null || product.categoryName == _selectedCategory;
-                      final matchesLocation = _selectedLocation == null || product.description.contains(_selectedLocation!);
                       final matchesSearch = _searchText.isEmpty || product.name.toLowerCase().contains(_searchText.toLowerCase());
-                      return matchesCategory && matchesLocation && matchesSearch;
+                      return matchesCategory && matchesSearch;
                     }).toList();
 
                     if (filteredProducts.isEmpty) {
@@ -249,10 +242,68 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showCategoryFilter(BuildContext context) {
-    // Aynı şekilde devam edecek...
-  }
-
-  void _showLocationFilter(BuildContext context) {
-    // Aynı şekilde devam edecek...
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: FutureBuilder<List<CategoryData>>(
+              future: _categoriesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Kategori yüklenemedi: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('Kategori bulunamadı.'));
+                }
+                final categories = snapshot.data!;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const Text(
+                      'Kategoriler',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      title: const Text('Tümü'),
+                      leading: const Icon(Icons.all_inclusive, color: Colors.green),
+                      selected: _selectedCategory == null,
+                      onTap: () {
+                        setState(() => _selectedCategory = null);
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ...categories.map((category) => ListTile(
+                      title: Text(category.name ?? ''),
+                      leading: const Icon(Icons.category, color: Colors.blueAccent),
+                      selected: _selectedCategory == category.name,
+                      onTap: () {
+                        setState(() => _selectedCategory = category.name);
+                        Navigator.pop(context);
+                      },
+                    )),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }

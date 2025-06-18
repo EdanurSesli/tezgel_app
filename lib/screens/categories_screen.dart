@@ -1,41 +1,28 @@
 // favorites_screen.dart
 import 'package:flutter/material.dart';
+import 'package:tezgel_app/models/category/category_response.dart';
+import '../services/category_services.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
-  final List<Map<String, dynamic>> categories = const [
-    {
-      'title': 'Baklagiller',
-      'icon': Icons.rice_bowl,
-      'color': Colors.orangeAccent,
-    },
-    {
-      'title': 'Sebzeler',
-      'icon': Icons.eco,
-      'color': Colors.green,
-    },
-    {
-      'title': 'Meyveler',
-      'icon': Icons.apple,
-      'color': Colors.redAccent,
-    },
-    {
-      'title': 'Süt Ürünleri',
-      'icon': Icons.local_drink,
-      'color': Colors.blueAccent,
-    },
-    {
-      'title': 'Et & Tavuk',
-      'icon': Icons.set_meal,
-      'color': Colors.brown,
-    },
-    {
-      'title': 'Unlu Mamuller',
-      'icon': Icons.bakery_dining,
-      'color': Colors.amber,
-    },
-  ];
+  @override
+  State<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen> {
+  late Future<List<CategoryData>> _categoriesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoriesFuture = _fetchCategories();
+  }
+
+  Future<List<CategoryData>> _fetchCategories() async {
+    final response = await CategoryService().getCategories();
+    return response.data ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,50 +36,66 @@ class CategoriesScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          itemCount: categories.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.1,
-          ),
-          itemBuilder: (context, index) {
-            final category = categories[index];
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+        child: FutureBuilder<List<CategoryData>>(
+          future: _categoriesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Kategori yüklenemedi: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('Kategori bulunamadı.'));
+            }
+            final categories = snapshot.data!;
+            return GridView.builder(
+              itemCount: categories.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.1,
               ),
-              elevation: 3,
-              color: category['color'].withOpacity(0.15),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  // Kategoriye tıklanınca yapılacaklar
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: category['color'],
-                      radius: 28,
-                      child: Icon(
-                        category['icon'],
-                        color: Colors.white,
-                        size: 32,
-                      ),
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                // Renk ve ikon ataması örnek amaçlı, isteğe göre düzenlenebilir
+                final color = Colors.blueAccent;
+                final icon = Icons.category;
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 3,
+                  color: color.withOpacity(0.15),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      // Kategoriye tıklanınca yapılacaklar
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: color,
+                          radius: 28,
+                          child: Icon(
+                            icon,
+                            color: Colors.white,
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          category.name ?? '',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      category['title'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
           },
         ),
