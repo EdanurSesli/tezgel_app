@@ -18,7 +18,9 @@ Future<BusinessProfileResponse> getBusinessDetail(String token) async {
     print('Response Body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return BusinessProfileResponse.fromJson(jsonDecode(response.body));
+      final parsed = BusinessProfileResponse.fromJson(jsonDecode(response.body));
+      print('Parsed BusinessData: ${parsed.data?.toJson()}'); // <-- DEBUG: Modeldeki tüm alanları göster
+      return parsed;
     } else {
       throw Exception('Kullanıcı detayları getirilemedi: ${response.body}');
     }

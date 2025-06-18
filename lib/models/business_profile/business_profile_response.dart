@@ -1,34 +1,79 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class BusinessProfileResponse {
+  final String? message;
+  final BusinessData? data;
+  final int? statusCode;
+  final bool? isSuccess;
+  final bool? hasExceptionError;
+  final List<String>? validationErrors;
 
-part 'business_profile_response.freezed.dart';
-part 'business_profile_response.g.dart';
+  BusinessProfileResponse({
+    this.message,
+    this.data,
+    this.statusCode,
+    this.isSuccess,
+    this.hasExceptionError,
+    this.validationErrors,
+  });
 
-@freezed
-abstract class BusinessProfileResponse with _$BusinessProfileResponse {
-  const factory BusinessProfileResponse({
-    String? message,
-    BusinessData? data,
-    int? statusCode,
-    bool? isSuccess,
-    bool? hasExceptionError,
-    List<String>? validationErrors,
-  }) = _BusinessProfileResponse;
+  factory BusinessProfileResponse.fromJson(Map<String, dynamic> json) {
+    return BusinessProfileResponse(
+      message: json['message'],
+      data: json['data'] != null ? BusinessData.fromJson(json['data']) : null,
+      statusCode: json['statusCode'],
+      isSuccess: json['isSuccess'],
+      hasExceptionError: json['hasExceptionError'],
+      validationErrors: (json['validationErrors'] as List?)?.map((e) => e.toString()).toList(),
+    );
+  }
 
-  factory BusinessProfileResponse.fromJson(Map<String, dynamic> json) =>
-      _$BusinessProfileResponseFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'data': data?.toJson(),
+      'statusCode': statusCode,
+      'isSuccess': isSuccess,
+      'hasExceptionError': hasExceptionError,
+      'validationErrors': validationErrors,
+    };
+  }
 }
 
-@freezed
-abstract class BusinessData with _$BusinessData {
-  const factory BusinessData({
-    String? firstName,
-    String? lastName,
-    String? email,
-    String? companyName,
-    String? companyType,
-    String? closingTime,
-  }) = _BusinessData;
+class BusinessData {
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? companyName;
+  final String? companyType;
+  final String? closingTime;
 
-  factory BusinessData.fromJson(Map<String, dynamic> json) =>
-      _$BusinessDataFromJson(json);
+  BusinessData({
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.companyName,
+    this.companyType,
+    this.closingTime,
+  });
+
+  factory BusinessData.fromJson(Map<String, dynamic> json) {
+    return BusinessData(
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      email: json['email'],
+      companyName: json['companyName'],
+      companyType: json['companyType'],
+      closingTime: json['closingTime'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'companyName': companyName,
+      'companyType': companyType,
+      'closingTime': closingTime,
+    };
+  }
 }

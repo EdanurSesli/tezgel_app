@@ -79,11 +79,19 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 24),
-                      // Profil Fotoğrafı
+                      // Profil Fotoğrafı (Adının ilk harfi)
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: NetworkImage(
-                          'https://i.pravatar.cc/150?img=2',
+                        backgroundColor: Colors.orange,
+                        child: Text(
+                          (userData?.firstName != null && userData!.firstName!.isNotEmpty)
+                              ? userData!.firstName![0].toUpperCase()
+                              : 'K',
+                          style: const TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -115,8 +123,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                         child: ElevatedButton.icon(
                           onPressed: () async {
                             final prefs = await SharedPreferences.getInstance();
-                            await prefs.remove('accessToken');
-                            await prefs.remove('role');
+                            await prefs.clear(); // Tüm pref'leri sil
                             Navigator.pushReplacementNamed(context, '/login');
                           },
                           style: ElevatedButton.styleFrom(
@@ -146,6 +153,83 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     if (userData == null) {
       return const SizedBox.shrink();
     }
+    if (role == 'business') {
+      // Tüm business alanlarını sırayla göster
+      final businessMap = userData!.toJson();
+      final fieldLabels = {
+        'firstName': 'Ad',
+        'lastName': 'Soyad',
+        'email': 'Email',
+        'companyName': 'İşletme',
+        'companyType': 'İşletme Türü',
+        'closingTime': 'Kapanış Saati',
+      };
+      final iconMap = {
+        'firstName': Icons.person,
+        'lastName': Icons.person,
+        'email': Icons.email,
+        'companyName': Icons.business,
+        'companyType': Icons.category,
+        'closingTime': Icons.access_time,
+      };
+
+      // Sadece label'ı olan ve değeri boş olmayan alanları sırayla göster
+      final fields = [
+        'firstName',
+        'lastName',
+        'email',
+        'companyName',
+        'companyType',
+        'closingTime',
+      ].where((key) =>
+          businessMap[key] != null &&
+          businessMap[key].toString().trim().isNotEmpty).toList();
+
+      return Card(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int i = 0; i < fields.length; i++) ...[
+                if (i != 0) const SizedBox(height: 16),
+                _buildInfoRow(
+                  iconMap[fields[i]] ?? Icons.info,
+                  fieldLabels[fields[i]] ?? fields[i],
+                  businessMap[fields[i]].toString(),
+                ),
+              ],
+              const SizedBox(height: 16),
+              _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CustomerServiceScreen()),
+                );
+              }),
+              const SizedBox(height: 16),
+              _buildActionButton(Icons.add_box, 'Ürün Ekle', () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductAddScreen()),
+                );
+              }),
+              const SizedBox(height: 16),
+              _buildActionButton(Icons.list, 'Ürünlerim', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyProductsScreen()),
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Customer ise mevcut yapı devam etsin
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -162,15 +246,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               const SizedBox(height: 16),
               _buildInfoRow(Icons.email, 'Email', userData!.email ?? ''),
             ],
-            if (role == 'business' && userData?.companyName != null) ...[
-              const SizedBox(height: 16),
-              _buildInfoRow(Icons.business, 'İşletme', userData!.companyName ?? ''),
-            ],
-            if (role == 'business' && userData?.companyType != null) ...[
-              const SizedBox(height: 16),
-              _buildInfoRow(Icons.category, 'İşletme Türü', userData!.companyType ?? ''),
-            ],
-            // ...diğer bilgiler...
             const SizedBox(height: 16),
             _buildActionButton(Icons.headset_mic, 'Müşteri Hizmetleri', () {
               Navigator.push(
