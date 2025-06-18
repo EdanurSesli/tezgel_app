@@ -32,6 +32,7 @@ _DataLogin _$DataLoginFromJson(Map<String, dynamic> json) => _DataLogin(
       accessToken: json['accessToken'] as String?,
       refreshToken: json['refreshToken'] as String?,
       emailConfirmed: json['emailConfirmed'] as bool?,
+      role: json['role'] as String?,
     );
 
 Map<String, dynamic> _$DataLoginToJson(_DataLogin instance) =>
@@ -39,4 +40,5 @@ Map<String, dynamic> _$DataLoginToJson(_DataLogin instance) =>
       'accessToken': instance.accessToken,
       'refreshToken': instance.refreshToken,
       'emailConfirmed': instance.emailConfirmed,
+      'role': instance.role,
     };

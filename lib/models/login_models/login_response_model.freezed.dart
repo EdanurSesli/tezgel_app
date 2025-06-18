@@ -310,6 +310,7 @@ mixin _$DataLogin {
   String? get accessToken;
   String? get refreshToken;
   bool? get emailConfirmed;
+  String? get role;
 
   /// Create a copy of DataLogin
   /// with the given fields replaced by the non-null parameter values.
@@ -331,17 +332,18 @@ mixin _$DataLogin {
             (identical(other.refreshToken, refreshToken) ||
                 other.refreshToken == refreshToken) &&
             (identical(other.emailConfirmed, emailConfirmed) ||
-                other.emailConfirmed == emailConfirmed));
+                other.emailConfirmed == emailConfirmed) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, accessToken, refreshToken, emailConfirmed);
+      Object.hash(runtimeType, accessToken, refreshToken, emailConfirmed, role);
 
   @override
   String toString() {
-    return 'DataLogin(accessToken: $accessToken, refreshToken: $refreshToken, emailConfirmed: $emailConfirmed)';
+    return 'DataLogin(accessToken: $accessToken, refreshToken: $refreshToken, emailConfirmed: $emailConfirmed, role: $role)';
   }
 }
 
@@ -350,7 +352,11 @@ abstract mixin class $DataLoginCopyWith<$Res> {
   factory $DataLoginCopyWith(DataLogin value, $Res Function(DataLogin) _then) =
       _$DataLoginCopyWithImpl;
   @useResult
-  $Res call({String? accessToken, String? refreshToken, bool? emailConfirmed});
+  $Res call(
+      {String? accessToken,
+      String? refreshToken,
+      bool? emailConfirmed,
+      String? role});
 }
 
 /// @nodoc
@@ -368,6 +374,7 @@ class _$DataLoginCopyWithImpl<$Res> implements $DataLoginCopyWith<$Res> {
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
     Object? emailConfirmed = freezed,
+    Object? role = freezed,
   }) {
     return _then(_self.copyWith(
       accessToken: freezed == accessToken
@@ -382,6 +389,10 @@ class _$DataLoginCopyWithImpl<$Res> implements $DataLoginCopyWith<$Res> {
           ? _self.emailConfirmed
           : emailConfirmed // ignore: cast_nullable_to_non_nullable
               as bool?,
+      role: freezed == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -389,7 +400,8 @@ class _$DataLoginCopyWithImpl<$Res> implements $DataLoginCopyWith<$Res> {
 /// @nodoc
 @JsonSerializable()
 class _DataLogin implements DataLogin {
-  const _DataLogin({this.accessToken, this.refreshToken, this.emailConfirmed});
+  const _DataLogin(
+      {this.accessToken, this.refreshToken, this.emailConfirmed, this.role});
   factory _DataLogin.fromJson(Map<String, dynamic> json) =>
       _$DataLoginFromJson(json);
 
@@ -399,6 +411,8 @@ class _DataLogin implements DataLogin {
   final String? refreshToken;
   @override
   final bool? emailConfirmed;
+  @override
+  final String? role;
 
   /// Create a copy of DataLogin
   /// with the given fields replaced by the non-null parameter values.
@@ -425,17 +439,18 @@ class _DataLogin implements DataLogin {
             (identical(other.refreshToken, refreshToken) ||
                 other.refreshToken == refreshToken) &&
             (identical(other.emailConfirmed, emailConfirmed) ||
-                other.emailConfirmed == emailConfirmed));
+                other.emailConfirmed == emailConfirmed) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, accessToken, refreshToken, emailConfirmed);
+      Object.hash(runtimeType, accessToken, refreshToken, emailConfirmed, role);
 
   @override
   String toString() {
-    return 'DataLogin(accessToken: $accessToken, refreshToken: $refreshToken, emailConfirmed: $emailConfirmed)';
+    return 'DataLogin(accessToken: $accessToken, refreshToken: $refreshToken, emailConfirmed: $emailConfirmed, role: $role)';
   }
 }
 
@@ -447,7 +462,11 @@ abstract mixin class _$DataLoginCopyWith<$Res>
       __$DataLoginCopyWithImpl;
   @override
   @useResult
-  $Res call({String? accessToken, String? refreshToken, bool? emailConfirmed});
+  $Res call(
+      {String? accessToken,
+      String? refreshToken,
+      bool? emailConfirmed,
+      String? role});
 }
 
 /// @nodoc
@@ -465,6 +484,7 @@ class __$DataLoginCopyWithImpl<$Res> implements _$DataLoginCopyWith<$Res> {
     Object? accessToken = freezed,
     Object? refreshToken = freezed,
     Object? emailConfirmed = freezed,
+    Object? role = freezed,
   }) {
     return _then(_DataLogin(
       accessToken: freezed == accessToken
@@ -479,6 +499,10 @@ class __$DataLoginCopyWithImpl<$Res> implements _$DataLoginCopyWith<$Res> {
           ? _self.emailConfirmed
           : emailConfirmed // ignore: cast_nullable_to_non_nullable
               as bool?,
+      role: freezed == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }

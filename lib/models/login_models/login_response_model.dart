@@ -24,6 +24,7 @@ abstract class DataLogin with _$DataLogin {
         String? accessToken,
         String? refreshToken,
         bool? emailConfirmed,
+        String? role,
     }) = _DataLogin;
 
     factory DataLogin.fromJson(Map<String, dynamic> json) => _$DataLoginFromJson(json);
