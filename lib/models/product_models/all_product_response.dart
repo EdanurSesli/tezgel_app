@@ -4,8 +4,8 @@ part 'all_product_response.freezed.dart';
 part 'all_product_response.g.dart';
 
 @freezed
-abstract class ProductResponse with _$ProductResponse {
-  const factory ProductResponse({
+abstract class AllProductResponse with _$AllProductResponse {
+  const factory AllProductResponse({
     String? message,
     List<ProductData>? data,
     int? statusCode,
@@ -14,8 +14,8 @@ abstract class ProductResponse with _$ProductResponse {
     String? validationErrors,
   }) = _ProductResponse;
 
-  factory ProductResponse.fromJson(Map<String, dynamic> json) =>
-      _$ProductResponseFromJson(json);
+  factory AllProductResponse.fromJson(Map<String, dynamic> json) =>
+      _$AllProductResponseFromJson(json);
 }
 
 @freezed

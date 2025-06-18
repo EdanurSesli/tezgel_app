@@ -6,17 +6,27 @@ part of 'all_product_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_ProductResponse _$ProductResponseFromJson(Map<String, dynamic> json) =>
-    _ProductResponse(
-      message: json['message'] as String?,
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) => ProductData.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      statusCode: (json['statusCode'] as num?)?.toInt(),
-      isSuccess: json['isSuccess'] as bool?,
-      hasExceptionError: json['hasExceptionError'] as bool?,
-      validationErrors: json['validationErrors'] as String?,
-    );
+_ProductResponse _$ProductResponseFromJson(Map<String, dynamic> json) {
+  final rawData = json['data'];
+  List<ProductData>? dataList;
+  if (rawData is List) {
+    dataList = rawData
+        .map((e) => ProductData.fromJson(e as Map<String, dynamic>))
+        .toList();
+  } else if (rawData is Map<String, dynamic>) {
+    dataList = [ProductData.fromJson(rawData)];
+  } else {
+    dataList = null;
+  }
+  return _ProductResponse(
+    message: json['message'] as String?,
+    data: dataList,
+    statusCode: (json['statusCode'] as num?)?.toInt(),
+    isSuccess: json['isSuccess'] as bool?,
+    hasExceptionError: json['hasExceptionError'] as bool?,
+    validationErrors: json['validationErrors'] as String?,
+  );
+}
 
 Map<String, dynamic> _$ProductResponseToJson(_ProductResponse instance) =>
     <String, dynamic>{

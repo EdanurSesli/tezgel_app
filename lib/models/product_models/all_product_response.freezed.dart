@@ -12,9 +12,12 @@ part of 'all_product_response.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+AllProductResponse _$AllProductResponseFromJson(Map<String, dynamic> json) {
+  return _ProductResponse.fromJson(json);
+}
 
 /// @nodoc
-mixin _$ProductResponse {
+mixin _$AllProductResponse {
   String? get message;
   List<ProductData>? get data;
   int? get statusCode;
@@ -22,22 +25,22 @@ mixin _$ProductResponse {
   bool? get hasExceptionError;
   String? get validationErrors;
 
-  /// Create a copy of ProductResponse
+  /// Create a copy of AllProductResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ProductResponseCopyWith<ProductResponse> get copyWith =>
-      _$ProductResponseCopyWithImpl<ProductResponse>(
-          this as ProductResponse, _$identity);
+  $AllProductResponseCopyWith<AllProductResponse> get copyWith =>
+      _$AllProductResponseCopyWithImpl<AllProductResponse>(
+          this as AllProductResponse, _$identity);
 
-  /// Serializes this ProductResponse to a JSON map.
+  /// Serializes this AllProductResponse to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ProductResponse &&
+            other is AllProductResponse &&
             (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality().equals(other.data, data) &&
             (identical(other.statusCode, statusCode) ||
@@ -63,15 +66,15 @@ mixin _$ProductResponse {
 
   @override
   String toString() {
-    return 'ProductResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'AllProductResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ProductResponseCopyWith<$Res> {
-  factory $ProductResponseCopyWith(
-          ProductResponse value, $Res Function(ProductResponse) _then) =
-      _$ProductResponseCopyWithImpl;
+abstract mixin class $AllProductResponseCopyWith<$Res> {
+  factory $AllProductResponseCopyWith(
+          AllProductResponse value, $Res Function(AllProductResponse) _then) =
+      _$AllProductResponseCopyWithImpl;
   @useResult
   $Res call(
       {String? message,
@@ -83,14 +86,14 @@ abstract mixin class $ProductResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ProductResponseCopyWithImpl<$Res>
-    implements $ProductResponseCopyWith<$Res> {
-  _$ProductResponseCopyWithImpl(this._self, this._then);
+class _$AllProductResponseCopyWithImpl<$Res>
+    implements $AllProductResponseCopyWith<$Res> {
+  _$AllProductResponseCopyWithImpl(this._self, this._then);
 
-  final ProductResponse _self;
-  final $Res Function(ProductResponse) _then;
+  final AllProductResponse _self;
+  final $Res Function(AllProductResponse) _then;
 
-  /// Create a copy of ProductResponse
+  /// Create a copy of AllProductResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -133,7 +136,7 @@ class _$ProductResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _ProductResponse implements ProductResponse {
+class _ProductResponse implements AllProductResponse {
   const _ProductResponse(
       {this.message,
       final List<ProductData>? data,
@@ -166,7 +169,7 @@ class _ProductResponse implements ProductResponse {
   @override
   final String? validationErrors;
 
-  /// Create a copy of ProductResponse
+  /// Create a copy of AllProductResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -211,13 +214,13 @@ class _ProductResponse implements ProductResponse {
 
   @override
   String toString() {
-    return 'ProductResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
+    return 'AllProductResponse(message: $message, data: $data, statusCode: $statusCode, isSuccess: $isSuccess, hasExceptionError: $hasExceptionError, validationErrors: $validationErrors)';
   }
 }
 
 /// @nodoc
 abstract mixin class _$ProductResponseCopyWith<$Res>
-    implements $ProductResponseCopyWith<$Res> {
+    implements $AllProductResponseCopyWith<$Res> {
   factory _$ProductResponseCopyWith(
           _ProductResponse value, $Res Function(_ProductResponse) _then) =
       __$ProductResponseCopyWithImpl;
@@ -240,7 +243,7 @@ class __$ProductResponseCopyWithImpl<$Res>
   final _ProductResponse _self;
   final $Res Function(_ProductResponse) _then;
 
-  /// Create a copy of ProductResponse
+  /// Create a copy of AllProductResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
