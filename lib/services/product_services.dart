@@ -7,7 +7,7 @@ import '../constants.dart';
 
 class ProductService {
   Future<ProductResponse> getProduct(String token) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Product/available');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Product/available');
 
     final response = await http.get(
       url,
@@ -27,14 +27,22 @@ class ProductService {
 
   Future<BaseRegisterResponse> createProduct(String token, ProductRequest request) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/Business/create-product');
+    
+    // Debug için request body'i kontrol edelim
+    final requestBody = request.toJson();
+    print('Request Body: ${jsonEncode(requestBody)}');
+    
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(request.toJson()),
+      body: jsonEncode(requestBody),
     );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return BaseRegisterResponse.fromJson(jsonDecode(response.body));

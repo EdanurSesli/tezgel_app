@@ -15,12 +15,18 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$BaseRegisterResponse {
+  @JsonKey(name: 'Message')
   String? get message;
-  String? get data;
+  @JsonKey(name: 'Data')
+  dynamic get data;
+  @JsonKey(name: 'StatusCode')
   int? get statusCode;
+  @JsonKey(name: 'IsSuccess')
   bool? get isSuccess;
+  @JsonKey(name: 'HasExceptionError')
   bool? get hasExceptionError;
-  String? get validationErrors;
+  @JsonKey(name: 'ValidationErrors')
+  dynamic get validationErrors;
 
   /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -39,21 +45,27 @@ mixin _$BaseRegisterResponse {
         (other.runtimeType == runtimeType &&
             other is BaseRegisterResponse &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.data, data) || other.data == data) &&
+            const DeepCollectionEquality().equals(other.data, data) &&
             (identical(other.statusCode, statusCode) ||
                 other.statusCode == statusCode) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess) &&
             (identical(other.hasExceptionError, hasExceptionError) ||
                 other.hasExceptionError == hasExceptionError) &&
-            (identical(other.validationErrors, validationErrors) ||
-                other.validationErrors == validationErrors));
+            const DeepCollectionEquality()
+                .equals(other.validationErrors, validationErrors));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message, data, statusCode,
-      isSuccess, hasExceptionError, validationErrors);
+  int get hashCode => Object.hash(
+      runtimeType,
+      message,
+      const DeepCollectionEquality().hash(data),
+      statusCode,
+      isSuccess,
+      hasExceptionError,
+      const DeepCollectionEquality().hash(validationErrors));
 
   @override
   String toString() {
@@ -68,12 +80,12 @@ abstract mixin class $BaseRegisterResponseCopyWith<$Res> {
       _$BaseRegisterResponseCopyWithImpl;
   @useResult
   $Res call(
-      {String? message,
-      String? data,
-      int? statusCode,
-      bool? isSuccess,
-      bool? hasExceptionError,
-      String? validationErrors});
+      {@JsonKey(name: 'Message') String? message,
+      @JsonKey(name: 'Data') dynamic data,
+      @JsonKey(name: 'StatusCode') int? statusCode,
+      @JsonKey(name: 'IsSuccess') bool? isSuccess,
+      @JsonKey(name: 'HasExceptionError') bool? hasExceptionError,
+      @JsonKey(name: 'ValidationErrors') dynamic validationErrors});
 }
 
 /// @nodoc
@@ -104,7 +116,7 @@ class _$BaseRegisterResponseCopyWithImpl<$Res>
       data: freezed == data
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       statusCode: freezed == statusCode
           ? _self.statusCode
           : statusCode // ignore: cast_nullable_to_non_nullable
@@ -120,7 +132,7 @@ class _$BaseRegisterResponseCopyWithImpl<$Res>
       validationErrors: freezed == validationErrors
           ? _self.validationErrors
           : validationErrors // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
     ));
   }
 }
@@ -129,27 +141,33 @@ class _$BaseRegisterResponseCopyWithImpl<$Res>
 @JsonSerializable()
 class _BaseRegisterResponse implements BaseRegisterResponse {
   const _BaseRegisterResponse(
-      {this.message,
-      this.data,
-      this.statusCode,
-      this.isSuccess,
-      this.hasExceptionError,
-      this.validationErrors});
+      {@JsonKey(name: 'Message') this.message,
+      @JsonKey(name: 'Data') this.data,
+      @JsonKey(name: 'StatusCode') this.statusCode,
+      @JsonKey(name: 'IsSuccess') this.isSuccess,
+      @JsonKey(name: 'HasExceptionError') this.hasExceptionError,
+      @JsonKey(name: 'ValidationErrors') this.validationErrors});
   factory _BaseRegisterResponse.fromJson(Map<String, dynamic> json) =>
       _$BaseRegisterResponseFromJson(json);
 
   @override
+  @JsonKey(name: 'Message')
   final String? message;
   @override
-  final String? data;
+  @JsonKey(name: 'Data')
+  final dynamic data;
   @override
+  @JsonKey(name: 'StatusCode')
   final int? statusCode;
   @override
+  @JsonKey(name: 'IsSuccess')
   final bool? isSuccess;
   @override
+  @JsonKey(name: 'HasExceptionError')
   final bool? hasExceptionError;
   @override
-  final String? validationErrors;
+  @JsonKey(name: 'ValidationErrors')
+  final dynamic validationErrors;
 
   /// Create a copy of BaseRegisterResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -173,21 +191,27 @@ class _BaseRegisterResponse implements BaseRegisterResponse {
         (other.runtimeType == runtimeType &&
             other is _BaseRegisterResponse &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.data, data) || other.data == data) &&
+            const DeepCollectionEquality().equals(other.data, data) &&
             (identical(other.statusCode, statusCode) ||
                 other.statusCode == statusCode) &&
             (identical(other.isSuccess, isSuccess) ||
                 other.isSuccess == isSuccess) &&
             (identical(other.hasExceptionError, hasExceptionError) ||
                 other.hasExceptionError == hasExceptionError) &&
-            (identical(other.validationErrors, validationErrors) ||
-                other.validationErrors == validationErrors));
+            const DeepCollectionEquality()
+                .equals(other.validationErrors, validationErrors));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message, data, statusCode,
-      isSuccess, hasExceptionError, validationErrors);
+  int get hashCode => Object.hash(
+      runtimeType,
+      message,
+      const DeepCollectionEquality().hash(data),
+      statusCode,
+      isSuccess,
+      hasExceptionError,
+      const DeepCollectionEquality().hash(validationErrors));
 
   @override
   String toString() {
@@ -204,12 +228,12 @@ abstract mixin class _$BaseRegisterResponseCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? message,
-      String? data,
-      int? statusCode,
-      bool? isSuccess,
-      bool? hasExceptionError,
-      String? validationErrors});
+      {@JsonKey(name: 'Message') String? message,
+      @JsonKey(name: 'Data') dynamic data,
+      @JsonKey(name: 'StatusCode') int? statusCode,
+      @JsonKey(name: 'IsSuccess') bool? isSuccess,
+      @JsonKey(name: 'HasExceptionError') bool? hasExceptionError,
+      @JsonKey(name: 'ValidationErrors') dynamic validationErrors});
 }
 
 /// @nodoc
@@ -240,7 +264,7 @@ class __$BaseRegisterResponseCopyWithImpl<$Res>
       data: freezed == data
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       statusCode: freezed == statusCode
           ? _self.statusCode
           : statusCode // ignore: cast_nullable_to_non_nullable
@@ -256,7 +280,7 @@ class __$BaseRegisterResponseCopyWithImpl<$Res>
       validationErrors: freezed == validationErrors
           ? _self.validationErrors
           : validationErrors // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
     ));
   }
 }

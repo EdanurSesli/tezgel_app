@@ -8,7 +8,7 @@ class UserRegisterService {
   Future<BaseRegisterResponse> register(UserRegisterRequest request) async {
     try {
       final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/Auth/register-customer'),
+        Uri.parse('${ApiConstants.baseUrl}/api/Auth/register-customer'),
         headers: {
           'Content-Type': 'application/json',
         },

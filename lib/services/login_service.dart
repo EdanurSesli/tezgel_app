@@ -7,7 +7,7 @@ import 'storage_service.dart';
 
 class LoginService {
   Future<LoginResponseModel> login(LoginRequestModel request) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/login');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Auth/login');
 
     final response = await http.post(
       url,

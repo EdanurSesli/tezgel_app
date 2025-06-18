@@ -6,7 +6,7 @@ import '../constants.dart';
 
 class BusinessRegisterService {
   Future<BaseRegisterResponse> businessregister(BusinessRegisterRequest request) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/register-business');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Auth/register-business');
     final requestBody = jsonEncode(request.toJson());
     print('Gönderilen request body: $requestBody'); // Burada yazdırdık
 

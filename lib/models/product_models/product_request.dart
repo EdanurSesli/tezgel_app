@@ -1,18 +1,29 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'product_request.freezed.dart';
-part 'product_request.g.dart';
+class ProductRequest {
+  final String name;
+  final String description;
+  final String categoryId;
+  final String imagePath;
+  final double originalPrice;
+  final double discountedPrice;
 
-@freezed
-abstract class ProductRequest with _$ProductRequest {
-  const factory ProductRequest({
-    String? name,
-    String? description,
-    double? originalPrice,
-    double? discountedPrice,
-    String? categoryId,
-    String? imagePath,
-  }) = _ProductRequest;
+  ProductRequest({
+    required this.name,
+    required this.description,
+    required this.categoryId,
+    required this.imagePath,
+    required this.originalPrice,
+    required this.discountedPrice,
+  });
 
-  factory ProductRequest.fromJson(Map<String, dynamic> json) => _$ProductRequestFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'Name': name,
+      'Description': description,
+      'CategoryId': categoryId,
+      'ImagePath': imagePath,
+      'OriginalPrice': originalPrice,
+      'DiscountedPrice': discountedPrice,
+    };
+  }
 }

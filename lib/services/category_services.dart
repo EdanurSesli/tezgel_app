@@ -6,7 +6,7 @@ import 'storage_service.dart';
 
 class CategoryService {
   Future<CategoryResponse> getCategories() async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Product/category-list');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Product/category-list');
     final token = await StorageService.getToken();
 
     final response = await http.get(

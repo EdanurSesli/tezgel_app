@@ -5,7 +5,7 @@ import '../models/register_models/base_register_response.dart';
 
 class VerifyEmailService {
   Future<BaseRegisterResponse> sendCode(String token) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/create-email-code');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Auth/create-email-code');
 
     final response = await http.post(
       url,

@@ -9,21 +9,21 @@ part of 'base_register_response.dart';
 _BaseRegisterResponse _$BaseRegisterResponseFromJson(
         Map<String, dynamic> json) =>
     _BaseRegisterResponse(
-      message: json['message'] as String?,
-      data: json['data'] as String?,
-      statusCode: (json['statusCode'] as num?)?.toInt(),
-      isSuccess: json['isSuccess'] as bool?,
-      hasExceptionError: json['hasExceptionError'] as bool?,
-      validationErrors: json['validationErrors'] as String?,
+      message: json['Message'] as String?,
+      data: json['Data'],
+      statusCode: (json['StatusCode'] as num?)?.toInt(),
+      isSuccess: json['IsSuccess'] as bool?,
+      hasExceptionError: json['HasExceptionError'] as bool?,
+      validationErrors: json['ValidationErrors'],
     );
 
 Map<String, dynamic> _$BaseRegisterResponseToJson(
         _BaseRegisterResponse instance) =>
     <String, dynamic>{
-      'message': instance.message,
-      'data': instance.data,
-      'statusCode': instance.statusCode,
-      'isSuccess': instance.isSuccess,
-      'hasExceptionError': instance.hasExceptionError,
-      'validationErrors': instance.validationErrors,
+      'Message': instance.message,
+      'Data': instance.data,
+      'StatusCode': instance.statusCode,
+      'IsSuccess': instance.isSuccess,
+      'HasExceptionError': instance.hasExceptionError,
+      'ValidationErrors': instance.validationErrors,
     };
