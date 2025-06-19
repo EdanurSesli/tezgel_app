@@ -99,7 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
-                  await _initializeProducts();
+                  // Token'ı tekrar al
+                  _token = await StorageService.getToken();
+                  if (_token != null) {
+                    setState(() {
+                      _productsFuture = ProductService().getProduct(_token!);
+                    });
+                  }
                 },
                 child: FutureBuilder<ProductResponse>(
                   future: _productsFuture,

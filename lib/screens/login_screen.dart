@@ -51,26 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 }
                 if (state is LoginSuccess) {
-                  if (state.loginResponse.data?.emailConfirmed == false) {
-                    // Email doğrulama gerekli, doğrulama ekranına yönlendir
-                    final verifyService = VerifyEmailService();
-                    try {
-                      verifyService.sendCode(state.loginResponse.data!.accessToken!).then((_) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => VerifyEmailScreen(
-                              token: state.loginResponse.data!.accessToken!,
-                            ),
-                          ),
-                        );
-                      });
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  } else {
+                  // if (state.loginResponse.data?.emailConfirmed == false) {
+                  //   // Email doğrulama gerekli, doğrulama ekranına yönlendir
+                  //   final verifyService = VerifyEmailService();
+                  //   try {
+                  //     verifyService.sendCode(state.loginResponse.data!.accessToken!).then((_) {
+                  //       Navigator.pushReplacement(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (_) => VerifyEmailScreen(
+                  //             token: state.loginResponse.data!.accessToken!,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     });
+                  //   } catch (e) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(content: Text(e.toString())),
+                  //     );
+                  //   }
+                  // } else {
                     // Save token and role to SharedPreferences
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setString('accessToken', state.loginResponse.data!.accessToken!);
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       (route) => false,
                     );
-                  }
+                  // }
                 }
               },
               child: Column(
