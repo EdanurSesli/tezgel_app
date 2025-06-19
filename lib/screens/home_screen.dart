@@ -4,6 +4,9 @@ import 'package:tezgel_app/models/product_models/product_model.dart';
 import '../services/product_services.dart';
 import '../services/storage_service.dart';
 import '../services/category_services.dart';
+import 'package:tezgel_app/services/reservation_services.dart';
+import 'package:tezgel_app/models/reservation_models/reservation_create_response.dart';
+import 'reservation_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -195,7 +198,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      if (_token == null) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Oturum bulunamadı.'))
+                                        );
+                                        return;
+                                      }
+                                      try {
+                                        final response = await ReservationServices().createReservation(
+                                          _token!,
+                                          product.id ?? '',
+                                        );
+                                        if (response.isSuccess == true) {
+                                          // Bildirim göster
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Rezervasyon oluşturuldu!'))
+                                          );
+                                          // Rezervasyon ekranına yönlendir
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ReservationScreen(
+                                                product: product,
+                                                reservationId: response.data?.reservationId ?? '',
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text(response.message ?? 'Rezervasyon oluşturulamadı.'))
+                                          );
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Hata: $e'))
+                                        );
+                                      }
+                                    },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
