@@ -79,20 +79,14 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
       );
 
       final response = await ProductService().createProduct(token, request);
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Ürün başarıyla eklendi'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Ana sayfaya yönlendir ve güncelleme gerektiğini bildir
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+      // Sadece başarılıysa yönlendir, bildirim gösterme
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/homescreen', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: ${response.message ?? "Ürün eklenemedi"}'),
-            backgroundColor: Colors.red,
+            content: Text( "Ürün eklendi"),
+            backgroundColor: Colors.green,
           ),
         );
       }

@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                       minimumSize: const Size(double.infinity, 50),
                                     ),
-                                    child: const Text('Detayları Gör', style: TextStyle(color: Colors.white)),
+                                    child: const Text('Rezervasyon Oluştur', style: TextStyle(color: Colors.white)),
                                   ),
                                 ],
                               ),

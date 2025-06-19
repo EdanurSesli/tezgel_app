@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget {
         return supportedLocales.first;
       },
       routes: {
+        '/homescreen': (context) => const HomeScreen(),
         '/businessregister': (context) => const BusinessRegisterScreen(),
         '/userregister': (context) => const UserRegisterScreen(),
         '/register': (context) => const RegisterSelectionScreen(),
