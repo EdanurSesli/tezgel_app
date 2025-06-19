@@ -5,6 +5,9 @@ import 'package:tezgel_app/screens/my_products_screen.dart';
 import 'package:tezgel_app/screens/product_add_screen.dart';
 import 'package:tezgel_app/services/user_info_services.dart';
 import 'package:intl/intl.dart';
+import 'package:tezgel_app/services/business_service.dart';
+import 'package:tezgel_app/services/customer_services.dart';
+import 'package:tezgel_app/screens/reservation_list_screen.dart';
 
 class MyAccountScreen extends StatefulWidget {
   const MyAccountScreen({super.key});
@@ -45,6 +48,15 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     } else {
       setState(() => isLoading = false);
     }
+  }
+
+  Future<void> _showReservations() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ReservationListScreen(role: role),
+      ),
+    );
   }
 
   @override
@@ -183,6 +195,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 MaterialPageRoute(builder: (_) => const CustomerServiceScreen()),
               );
             }),
+            const SizedBox(height: 16),
+            _buildActionButton(Icons.calendar_today, 'Rezervasyonlarım', _showReservations),
             const SizedBox(height: 16),
             if (role == 'Business') ...[
               _buildActionButton(Icons.add_box, 'Ürün Ekle', () {

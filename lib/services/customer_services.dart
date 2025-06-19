@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:tezgel_app/models/product_models/all_product_response.dart';
 import 'package:tezgel_app/models/product_models/product_repeat_model.dart';
 import 'package:tezgel_app/models/reservation_models/reservation_complete.dart';
+import 'package:tezgel_app/models/reservation_models/reservation_list_response.dart';
 import '../models/product_models/product_model.dart';
 import '../models/register_models/base_register_response.dart';
 import '../models/product_models/product_request.dart';
@@ -10,7 +11,7 @@ import '../constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerServices {
-  Future<ProductResponse> getReservationList(String token) async {
+  Future<ReservationListResponse> getReservationList(String token) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/Customer/reservation-list');
 
     final response = await http.get(
@@ -23,7 +24,7 @@ class CustomerServices {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return ProductResponse.fromJson(data);
+      return ReservationListResponse.fromJson(data);
     } else {
       throw Exception('Ürün listeleme başarısız: ${response.statusCode} ${response.body}');
     }
