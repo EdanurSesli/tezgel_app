@@ -78,4 +78,30 @@ class ReservationServices {
       throw Exception('Ürün detayları getirilemedi: ${response.body}');
     }
   }
+
+  Future<ReservationCreateResponse> completeReservation(
+      String token, String productId, String busi) async {
+    final url = Uri.parse(
+        '${ApiConstants.baseUrl}/api/Reservation/complete');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'productId': productId, 'businessQrid': 'businessQrid'}), // Example businessQrid
+    );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ReservationCreateResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Reservasyon oluşturulamadı: ${response.body}');
+    }
+  }
+
+  
 }

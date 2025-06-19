@@ -86,7 +86,10 @@ class BottomNavBarWidget extends StatelessWidget {
                 ],
               ),
               child: FloatingActionButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Ortadaki şimşek ikonuna basınca 2. indexi tetikle
+                  onItemTapped(2);
+                },
                 backgroundColor: Colors.green,
                 elevation: 0,
                 child: const Icon(

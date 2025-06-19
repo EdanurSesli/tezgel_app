@@ -52,7 +52,28 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            const Text('LOGO', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text(
+                  'TEZ',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green, // TEZ yeşil
+                  ),
+                ),
+                SizedBox(width: 2),
+                Text(
+                  'GEL',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange, // GEL turuncu
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
