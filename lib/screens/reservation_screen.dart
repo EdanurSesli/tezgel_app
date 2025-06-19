@@ -66,10 +66,16 @@ class _ReservationScreenState extends State<ReservationScreen> {
         });
         return;
       }
-      final response = await ReservationServices().statusReservation(token);
-      // response.data doğrudan durum string'i (ör: "Pending")
+      final response = await ReservationServices().statusReservation(token, widget.reservationId);
+      // response.data'nın string olup olmadığını kontrol et ve göster
+      String? status;
+      if (response.data != null) {
+        status = response.data.toString();
+      } else {
+        status = 'Durum alınamadı';
+      }
       setState(() {
-        _statusText = response.data?.toString() ?? 'Durum alınamadı';
+        _statusText = status;
       });
     } catch (e) {
       setState(() {

@@ -35,9 +35,9 @@ class ReservationServices {
     }
   }
 
-  Future<ProductResponse> statusReservation(String token) async {
+  Future<BaseRegisterResponse> statusReservation(String token, String reservationId) async {
     final url =
-        Uri.parse('${ApiConstants.baseUrl}/api/Reservation/reservation-status');
+        Uri.parse('${ApiConstants.baseUrl}/api/Reservation/reservation-status?reservationId=$reservationId');
 
     final response = await http.get(
       url,
@@ -49,7 +49,7 @@ class ReservationServices {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return ProductResponse.fromJson(data);
+      return BaseRegisterResponse.fromJson(data);
     } else {
       throw Exception(
           'Ürün listeleme başarısız: ${response.statusCode} ${response.body}');
