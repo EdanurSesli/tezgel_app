@@ -197,7 +197,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                                   TextFormField(
                                     controller: _imagePathController,
                                     decoration: InputDecoration(
-                                      labelText: 'Resim URL',
+                                      labelText: 'Resim Seç',
                                       prefixIcon: Icon(Icons.image_outlined, color: Colors.green[700]),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                                     ),
