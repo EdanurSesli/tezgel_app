@@ -24,7 +24,7 @@ class VerifyEmailService {
   }
 
   Future<BaseRegisterResponse> verifyCode(String token, String code) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/Auth/verify-email-code');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/Auth/verify-email-code');
 
     final response = await http.post(
       url,
