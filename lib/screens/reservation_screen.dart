@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tezgel_app/models/product_models/product_model.dart';
+import 'package:tezgel_app/services/reservation_services.dart';
+import '../services/storage_service.dart';
 
 class ReservationScreen extends StatefulWidget {
   final Product product;
@@ -20,12 +22,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
   static const int _initialSeconds = 600; // 10 dakika
   late int _remainingSeconds;
   Timer? _timer;
+  Timer? _statusTimer;
+  String? _statusText = 'Bekleniyor...';
+  bool _loadingStatus = false;
 
   @override
   void initState() {
     super.initState();
     _remainingSeconds = _initialSeconds;
     _startTimer();
+    _fetchStatus();
+    _startStatusTimer();
   }
 
   void _startTimer() {
@@ -40,9 +47,45 @@ class _ReservationScreenState extends State<ReservationScreen> {
     });
   }
 
+  void _startStatusTimer() {
+    _statusTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _fetchStatus();
+    });
+  }
+
+  Future<void> _fetchStatus() async {
+    if (_loadingStatus) return;
+    setState(() {
+      _loadingStatus = true;
+    });
+    try {
+      final token = await StorageService.getToken();
+      if (token == null) {
+        setState(() {
+          _statusText = 'Oturum bulunamadı';
+        });
+        return;
+      }
+      final response = await ReservationServices().statusReservation(token);
+      // response.data doğrudan durum string'i (ör: "Pending")
+      setState(() {
+        _statusText = response.data?.toString() ?? 'Durum alınamadı';
+      });
+    } catch (e) {
+      setState(() {
+        _statusText = 'Durum alınamadı';
+      });
+    } finally {
+      setState(() {
+        _loadingStatus = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
+    _statusTimer?.cancel();
     super.dispose();
   }
 
@@ -77,13 +120,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
             ),
             const SizedBox(height: 24),
             Center(
-              child: Text(
-                'Rezervasyon ID: ${widget.reservationId}',
-                style: const TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                 decoration: BoxDecoration(
@@ -102,6 +138,22 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: _loadingStatus
+                  ? const CircularProgressIndicator()
+                  : Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Rezervasyon Durumu: ${_statusText ?? ''}',
+                        style: const TextStyle(fontSize: 16, color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                      ),
+                    ),
             ),
             const SizedBox(height: 32),
             Text('Ürün Bilgileri', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
