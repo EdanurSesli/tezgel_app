@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tezgel_app/services/product_services.dart';
@@ -23,10 +22,8 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _originalPriceController = TextEditingController();
   final TextEditingController _discountedPriceController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController(); // Yeni eklendi
   String? categoryName;
-
-  final ImagePicker _picker = ImagePicker();
-  File? _pickedImage;
 
   List<CategoryData> categories = [];
   bool loading = true;
@@ -44,6 +41,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
     _descriptionController.dispose();
     _originalPriceController.dispose();
     _discountedPriceController.dispose();
+    _imageUrlController.dispose(); // Yeni eklendi
     super.dispose();
   }
 
@@ -62,37 +60,12 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
     }
   }
 
-  Future<void> _pickImage() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85, // kaliteyi düşürerek daha hızlı yüklenmesini sağla
-      );
-      if (image != null) {
-        setState(() => _pickedImage = File(image.path));
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Galeri açılamadı: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-
-  Future<String> _uploadImage(File file) async {
-    final id = const Uuid().v4();
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child('product_images/$id.jpg');
-    await ref.putFile(file);
-    return await ref.getDownloadURL();
-  }
-
   Future<void> _createProduct() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_pickedImage == null) {
+    if (_imageUrlController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen bir resim seçin'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('Lütfen bir resim URL\'si girin'), backgroundColor: Colors.red),
       );
       return;
     }
@@ -106,9 +79,6 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
         return;
       }
 
-      // Upload image to Firebase and get URL
-      final imageUrl = await _uploadImage(_pickedImage!);
-
       final selectedCategory = categories.firstWhere(
         (cat) => cat.name == categoryName,
         orElse: () => CategoryData(),
@@ -118,7 +88,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
         name: _nameController.text,
         description: _descriptionController.text,
         categoryId: selectedCategory.id?.toString() ?? '',
-        imagePath: imageUrl,
+        imagePath: _imageUrlController.text, // URL doğrudan kullanılıyor
         originalPrice: double.tryParse(_originalPriceController.text) ?? 0,
         discountedPrice: double.tryParse(_discountedPriceController.text) ?? 0,
       );
@@ -227,32 +197,38 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                                     validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
                                   ),
                                   const SizedBox(height: 16),
-                                  GestureDetector(
-                                    onTap: _pickImage,
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 150,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: _pickedImage == null
-                                          ? Center(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: const [
-                                                  Icon(Icons.image_outlined, size: 48, color: Colors.grey),
-                                                  SizedBox(height: 8),
-                                                  Text('Resim Seç'),
-                                                ],
-                                              ),
-                                            )
-                                          : ClipRRect(
-                                              borderRadius: BorderRadius.circular(12),
-                                              child: Image.file(_pickedImage!, fit: BoxFit.cover),
-                                            ),
+                                  TextFormField(
+                                    controller: _imageUrlController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Resim URL\'si',
+                                      prefixIcon: Icon(Icons.link, color: Colors.green[700]),
+                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                                     ),
+                                    validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
                                   ),
+                                  const SizedBox(height: 16),
+                                  _imageUrlController.text.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: Image.network(
+                                            _imageUrlController.text,
+                                            height: 150,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => const Center(child: Text('Geçersiz URL')),
+                                          ),
+                                        )
+                                      : Container(
+                                          width: double.infinity,
+                                          height: 150,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.grey),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: const Center(
+                                            child: Text('Resim önizlemesi'),
+                                          ),
+                                        ),
                                   const SizedBox(height: 16),
                                   Row(
                                     children: [
