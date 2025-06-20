@@ -30,7 +30,10 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
 
+  # Burası, pubspec.yaml içinde tanımlı tüm iOS plugin’lerini (firebase_storage,
+  # google_maps_flutter, image_picker_ios vs.) pod olarak ekler.
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
   target 'RunnerTests' do
     inherit! :search_paths
   end

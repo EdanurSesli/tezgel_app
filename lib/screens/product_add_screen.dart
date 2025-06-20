@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:tezgel_app/services/product_services.dart';
 import 'package:tezgel_app/models/product_models/product_request.dart';
 import 'package:tezgel_app/services/storage_service.dart';
@@ -16,10 +21,12 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _imagePathController = TextEditingController();
   final TextEditingController _originalPriceController = TextEditingController();
   final TextEditingController _discountedPriceController = TextEditingController();
   String? categoryName;
+
+  final ImagePicker _picker = ImagePicker();
+  File? _pickedImage;
 
   List<CategoryData> categories = [];
   bool loading = true;
@@ -35,7 +42,6 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
-    _imagePathController.dispose();
     _originalPriceController.dispose();
     _discountedPriceController.dispose();
     super.dispose();
@@ -56,13 +62,52 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85, // kaliteyi düşürerek daha hızlı yüklenmesini sağla
+      );
+      if (image != null) {
+        setState(() => _pickedImage = File(image.path));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Galeri açılamadı: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  Future<String> _uploadImage(File file) async {
+    final id = const Uuid().v4();
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('product_images/$id.jpg');
+    await ref.putFile(file);
+    return await ref.getDownloadURL();
+  }
+
   Future<void> _createProduct() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_pickedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lütfen bir resim seçin'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
     try {
       final token = await StorageService.getToken();
       if (token == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Oturum bulunamadı')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Oturum bulunamadı')),
+        );
         return;
       }
+
+      // Upload image to Firebase and get URL
+      final imageUrl = await _uploadImage(_pickedImage!);
 
       final selectedCategory = categories.firstWhere(
         (cat) => cat.name == categoryName,
@@ -73,29 +118,23 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
         name: _nameController.text,
         description: _descriptionController.text,
         categoryId: selectedCategory.id?.toString() ?? '',
-        imagePath: _imagePathController.text,
+        imagePath: imageUrl,
         originalPrice: double.tryParse(_originalPriceController.text) ?? 0,
         discountedPrice: double.tryParse(_discountedPriceController.text) ?? 0,
       );
 
       final response = await ProductService().createProduct(token, request);
-      // Sadece başarılıysa yönlendir, bildirim gösterme
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/homescreen', (route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/homescreen', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text( "Ürün eklendi"),
-            backgroundColor: Colors.green,
-          ),
+          const SnackBar(content: Text('Ürün eklenirken hata oluştu'), backgroundColor: Colors.red),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Hata: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Hata: \$e'), backgroundColor: Colors.red),
       );
     }
   }
@@ -188,14 +227,31 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                                     validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
                                   ),
                                   const SizedBox(height: 16),
-                                  TextFormField(
-                                    controller: _imagePathController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Resim Seç',
-                                      prefixIcon: Icon(Icons.image_outlined, color: Colors.green[700]),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                  GestureDetector(
+                                    onTap: _pickImage,
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: _pickedImage == null
+                                          ? Center(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: const [
+                                                  Icon(Icons.image_outlined, size: 48, color: Colors.grey),
+                                                  SizedBox(height: 8),
+                                                  Text('Resim Seç'),
+                                                ],
+                                              ),
+                                            )
+                                          : ClipRRect(
+                                              borderRadius: BorderRadius.circular(12),
+                                              child: Image.file(_pickedImage!, fit: BoxFit.cover),
+                                            ),
                                     ),
-                                    validator: (v) => v == null || v.isEmpty ? 'Zorunlu' : null,
                                   ),
                                   const SizedBox(height: 16),
                                   Row(
@@ -231,11 +287,7 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
                                   SizedBox(
                                     width: double.infinity,
                                     child: ElevatedButton.icon(
-                                      onPressed: () async {
-                                        if (_formKey.currentState?.validate() ?? false) {
-                                          await _createProduct();
-                                        }
-                                      },
+                                      onPressed: _createProduct,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         minimumSize: const Size(double.infinity, 50),
